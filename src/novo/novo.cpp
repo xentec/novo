@@ -32,7 +32,8 @@ static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GL
 
 format fmtTitle(APPNAME" - FPS: %d ::S: %d");
 
-Novo::Novo(variables_map opts)
+Novo::Novo(variables_map opts):
+	window(new Window(800, 600, APPNAME))
 {
 	// GLFW
 	glfwSetErrorCallback(glfwErrorCB);
@@ -55,21 +56,22 @@ Novo::Novo(variables_map opts)
 		throw std::runtime_error(string("GLEW init falied: ") +
 								 string(reinterpret_cast<const char*>(glewGetErrorString(stat))));
 	}
-}
-
-Novo::~Novo()
-{
-	glfwTerminate();
-}
-
-i32 Novo::run() {
-	window = sptr<Window>(new Window(800, 600, APPNAME));
 
 	window->config.resizable = false;
 	window->config.GLversion.major = 3;
 	window->config.GLversion.minor = 2;
 	window->config.GLprofile = WindowConfig::Profile::CORE;
 	window->config.debuging = true;
+}
+
+Novo::~Novo()
+{
+	window->close();
+	glfwTerminate();
+}
+
+i32 Novo::run() {
+
 	window->open();
 	window->bindContext();
 	window->setVsync(false);
