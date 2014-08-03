@@ -22,8 +22,6 @@ list(APPEND LIBS
 	${GLFW_LIBRARY}
 	${GLEW_LIBRARY}
 	${OPENGL_LIBRARIES}
-	${CMAKE_DL_LIBS}
-
 )
 
 string(TOUPPER ${CMAKE_SYSTEM_NAME} OS_NAME)
@@ -36,7 +34,7 @@ file(GLOB_RECURSE SHADERS res/shaders/*)
 
 
 # Shaders here only for listing in qtCreator
-add_executable(Novo ${SOURCES} ${SHADERS})
-target_link_libraries(Novo ${LIBS})
+add_executable(novo ${SOURCES} ${SHADERS})
+target_link_libraries(novo ${LIBS})
 
 
