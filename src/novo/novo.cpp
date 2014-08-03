@@ -7,6 +7,8 @@
 #include <novo/gfx/window.h>
 
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -23,9 +25,12 @@ using std::string;
 using std::bind;
 
 using boost::program_options::variables_map;
+using boost::format;
 
 static void glfwErrorCB(int code, const char* msg);
 static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid *userParam);
+
+format fmtTitle(APPNAME" - FPS: %d ::S: %d");
 
 Novo::Novo(variables_map opts)
 {
@@ -58,14 +63,13 @@ Novo::~Novo()
 }
 
 i32 Novo::run() {
-	window = sptr<Window>(new Window(800, 600, "Novo"));
+	window = sptr<Window>(new Window(800, 600, APPNAME));
 
 	window->config.resizable = false;
 	window->config.GLversion.major = 3;
 	window->config.GLversion.minor = 2;
 	window->config.GLprofile = WindowConfig::Profile::CORE;
 	window->config.debuging = true;
-
 	window->open();
 	window->bindContext();
 	window->setVsync(false);
@@ -99,7 +103,6 @@ i32 Novo::run() {
 	steady_clock::time_point tick = steady_clock::now();
 	i32 totalFrames = 0;
 	while(window->isOpen()) {
-
 		///##################################
 
 		screen->getCamera()->moveUpdate(1);
@@ -123,20 +126,19 @@ i32 Novo::run() {
 		glDisable(GL_DEPTH_TEST);
 
 		screen->draw();
+
 		///##################################
 		window->present();
 		window->poll();
 
 		totalFrames++; // +1 Frame
 		if(duration_cast<seconds>(steady_clock::now() - tick).count()) {
+
 			GLuint samples;
 			glGetQueryObjectuiv(query, GL_QUERY_RESULT, &samples);
 
-			string title = APPNAME" - FPS: ";
-			title += std::to_string(totalFrames);
-			title += " ::S: ";
-			title += std::to_string(samples);
-			window->setTitle(title);
+			fmtTitle % totalFrames % samples;
+			window->setTitle(fmtTitle.str());
 
 			totalFrames = 0;
 			tick = steady_clock::now();
@@ -241,24 +243,19 @@ static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GL
 {
 	using std::cerr;
 	using std::endl;
-	try {
-		cerr << "[" << glfwGetTime() << "] " << "glError:" << endl;
-		cerr << "\tID: " << id << ", ";
-		cerr << "Source: " << GL.Debug[source] << ", ";
-		cerr << "Type: " << GL.Debug[type] << ", ";
-		cerr << "Severity: " << GL.Debug[severity] << endl;
-		cerr << "\t" << message << endl;
-		cerr.flush();
-		/*
-		cerr << "Stack trace:" << endl;
-		cerr << saneStackTrace() << endl;
-		cerr.flush();
-		*/
-		if(severity == GL_DEBUG_SEVERITY_HIGH)
-			(reinterpret_cast<Novo*>(userParam))->getMainWindow()->close();
-	} catch (const std::exception &e) {
-		std::cout << "GLDEBUGPROC has thrown exception: " << e.what() << endl;
-	}
+
+	static format err("[%f] glError: %d::%s::%s::%s\n\t%s\n");
+
+	cerr << (err % glfwGetTime() % id % GL.Debug[severity] % GL.Debug[source] % GL.Debug[type] % message);
+	cerr.flush();
+	/*
+	cerr << "Stack trace:" << endl;
+	cerr << saneStackTrace() << endl;
+	cerr.flush();
+	*/
+	if(severity == GL_DEBUG_SEVERITY_HIGH)
+		//(reinterpret_cast<Novo*>(userParam))->getMainWindow()->close();
+		throw novo::NovoException("OpenGL critical error");
 }
 
 
