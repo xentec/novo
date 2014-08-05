@@ -7,6 +7,9 @@
 #include <memory>
 #include <cstdint>
 
+// chars
+typedef unsigned char	uchar;
+
 // integer
 typedef int8_t		i8;
 typedef uint8_t		u8;
