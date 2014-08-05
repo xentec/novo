@@ -5,13 +5,25 @@
 
 #include <glm/glm.hpp>
 
+#include <vector>
+
 namespace novo {
-namespace util {
+namespace io {
+
+using std::string;
+
+class File {
+public:
+	File(const string& path);
+
+	static std::vector<u8> get(const string& path);
+	static string getText(const string &path);
+};
+
 
 string loadFile(const string& file_name);
 
-}
-}
+}}
 
 std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec);
 

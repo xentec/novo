@@ -88,14 +88,14 @@ GLuint createProgram(const string& vertexSource, const string& fragmentSource, c
 }
 
 GLuint createProgramFromFiles(const string& vertexPath, const string& fragmentPath, const string& geometryPath) {
-	using ::novo::util::loadFile;
+	using novo::io::File;
 
 	// TODO: Ressource management
 	static const string prefix = "res/shaders/";
 	if(geometryPath.length())
-		return createProgram(loadFile(prefix + vertexPath), loadFile(prefix + fragmentPath), loadFile(prefix + geometryPath));
+		return createProgram(File::getText(prefix + vertexPath), File::getText(prefix + fragmentPath), File::getText(prefix + geometryPath));
 	else
-		return createProgram(loadFile(prefix + vertexPath), loadFile(prefix + fragmentPath));
+		return createProgram(File::getText(prefix + vertexPath), File::getText(prefix + fragmentPath));
 }
 
 }}}

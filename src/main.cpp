@@ -23,12 +23,14 @@ int main(int argc, char* argv[]) {
 	}
 
 	try {
-		Novo(opts).run();
+		return Novo(opts).run();
+	} catch (const NovoException& e) {
+		// TODO: better errors
+		std::cerr << "Novo: " << e.what() << std::endl;
+		return 2;
 	} catch (const std::exception& e) {
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Fatal: " << e.what() << std::endl;
 		return 1;
 	}
-
-	return 0;
 }
 

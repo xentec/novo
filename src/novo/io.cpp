@@ -4,33 +4,45 @@
 #include <stdexcept>
 
 namespace novo {
-namespace util {
+namespace io {
 
 using std::string;
 
-string loadFile(const string& file_name) {
-	using std::ifstream;
+File::File(const string &path)
+{
 
-	string content;
-	ifstream is(file_name, ifstream::in | ifstream::binary | ifstream::ate);
+}
+
+std::vector<u8> File::get(const string &path)
+{
+	using ifs = std::basic_ifstream<u8>;
+	ifs is(path, ifs::in | ifs::binary | ifs::ate);
 	if (!is.is_open())
-		throw std::runtime_error(string("Failed to open \"") + file_name + string("\""));
+		throw std::runtime_error(string("Failed to open \"") + path + string("\""));
 
-	// get length of file:
+/*	// get length of file:
 	i32 length = is.tellg();
 	is.seekg(0, is.beg);
 
-	content.resize(length, ' ');
+	std::vector<u8> data(length);
 
-	// pointer to string data
-	is.read(&*content.begin(), length);
+	// pointer to data
+	is.read(reinterpret_cast<uchar>(*data.begin()), length);
 	is.close();
+*/
+    std::vector<u8> data((std::istreambuf_iterator<u8>(is)), (std::istreambuf_iterator<u8>()));
 
-	return content;
+	is.close();
+	return data;
 }
 
+string File::getText(const string &path)
+{
+	std::vector<u8> data = get(path);
+    return string(data.begin(), data.end());
 }
-}
+
+}}
 
 std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec) {
 	out << "{"
