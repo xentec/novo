@@ -3,5 +3,6 @@
 
 #define OS_@OS_NAME@
 
+#define DEBUG
 
 #endif // CONFIG_H
