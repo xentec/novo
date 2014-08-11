@@ -1,7 +1,7 @@
 #include "obj.h"
 
 #include <novo/io.h>
-#include <novo/gfx/gl/debug.h>
+#include <novo/gfx/gl/names.h>
 
 #include <GL/glew.h>
 
@@ -48,8 +48,7 @@ GLuint createShader(GLenum type, const string& source) {
 		buffer.resize(length);
 		glGetShaderInfoLog(shader, length, nullptr, &*buffer.begin());
 
-		//throw new std::runtime_error(GL.Shader[type] ~ " shader failed!\n" std::string(buffer));
-		throw std::runtime_error(GL.Shader[type] + string(" failed!\n") + string(buffer));
+		throw std::runtime_error(gl::names::shader[type] + string(" failed!\n") + buffer);
 	}
 
 	return shader;
