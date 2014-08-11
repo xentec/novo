@@ -3,6 +3,7 @@
 
 #include <novo/gfx/camera.h>
 #include <novo/gfx/gl/obj.h>
+#include <novo/gfx/gl/buffer.h>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -10,18 +11,21 @@
 namespace novo {
 namespace graphics {
 
+using namespace gl;
+
 class Drawable
 {
 protected:
-	GLuint vao, vbo, ibo;
+	GLuint vao;
 	GLint prog;
+	Buffer vbo, ibo;
 public:
-	Drawable()  {
+	Drawable():
+		vbo(Buffer(Buffer::Vertex)), ibo(Buffer(Buffer::Index))
+	{
 		glGenVertexArrays(1, &vao);
-		util::createBuffers({&vbo, &ibo});
 	}
 	virtual ~Drawable() {
-		util::destroyBuffers({vbo, ibo});
 		glDeleteVertexArrays(1, &vao);
 	}
 

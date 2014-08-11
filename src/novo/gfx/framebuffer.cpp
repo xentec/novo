@@ -78,8 +78,6 @@ Framebuffer::~Framebuffer()
 	glDeleteProgram(prog);
 	glDeleteTextures(1, &cb);
 	glDeleteRenderbuffers(1, &rbo);
-	glDeleteBuffers(1, &vbo);
-	glDeleteVertexArrays(1, &vao);
 }
 
 void Framebuffer::bind()
