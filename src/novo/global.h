@@ -7,6 +7,10 @@
 #include <memory>
 #include <cstdint>
 
+#ifdef DEBUG
+    #include<iostream>
+#endif
+
 // chars
 typedef unsigned char	uchar;
 
