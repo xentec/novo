@@ -2,7 +2,7 @@
 
 #include <novo/io.h>
 #include <novo/entities/randomcubes.h>
-#include <novo/gfx/gl/debug.h>
+#include <novo/gfx/gl/names.h>
 #include <novo/gfx/framebuffer.h>
 #include <novo/gfx/window.h>
 
@@ -246,9 +246,11 @@ static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GL
 	using std::cerr;
 	using std::endl;
 
+	using namespace gl::names;
+
 	static format err("[%f] glError: %d::%s::%s::%s\n\t%s\n");
 
-	cerr << (err % glfwGetTime() % id % GL.Debug[severity] % GL.Debug[source] % GL.Debug[type] % message);
+	cerr << (err % glfwGetTime() % id % debug[severity] % debug[source] % debug[type] % message);
 	cerr.flush();
 	/*
 	cerr << "Stack trace:" << endl;
