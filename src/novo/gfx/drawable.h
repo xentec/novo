@@ -3,6 +3,7 @@
 
 #include <novo/gfx/camera.h>
 #include <novo/gfx/gl/obj.h>
+#include <novo/gfx/gl/vertexarray.h>
 #include <novo/gfx/gl/buffer.h>
 
 #include <GL/glew.h>
@@ -16,18 +17,13 @@ using namespace gl;
 class Drawable
 {
 protected:
-	GLuint vao;
+	VertexArray vao;
 	GLint prog;
 	Buffer vbo, ibo;
 public:
 	Drawable():
-		vbo(Buffer(buffer::Vertex)), ibo(Buffer(buffer::Index))
-	{
-		glGenVertexArrays(1, &vao);
-	}
-	virtual ~Drawable() {
-		glDeleteVertexArrays(1, &vao);
-	}
+		vbo(Buffer(buffer::Vertex, buffer::StaticDraw)), ibo(Buffer(buffer::Index, buffer::StaticDraw))
+	{}
 
 	virtual void draw(mat4* transform) = 0;
 	GLint getProgram() const { return prog; }

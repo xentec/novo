@@ -82,12 +82,11 @@ i32 Novo::run() {
 
 	///##################################
 	///##################################
-	u32 size = 512;
-	RandomCubes field(size*size, size, vec3(0));
-
 	sptr<Camera> cam(new Camera(vec3(0), 800, 600));
 	screen = sptr<Framebuffer>(new Framebuffer(800, 600, cam, false));
 
+	u32 size = 64;
+	RandomCubes field(size*size, size, vec3(0));
 	///##################################
 	///##################################
 

@@ -6,14 +6,16 @@
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <array>
+
 using namespace novo::graphics;
 
-static const GLfloat fbVertices[(2*3)*2] = {
+static const std::array<f32, (2*3)*2> fbVertices = {
 	-1, -1,  -1,  1,   1,  1, // Left
 	 1,  1,   1, -1,  -1, -1, // Right
 };
 
-static const GLfloat fbTex[(2*3)*2] = {
+static const std::array<f32, (2*3)*2> fbTex = {
 	0, 0,  0, 1,  1, 1,
 	1, 1,  1, 0,  0, 0,
 };
@@ -25,12 +27,13 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 	size_t vxSize = sizeof(fbVertices);
 	size_t txSize = sizeof(fbTex);
 
-	// Create vertex buffes to hold our vertices
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the vertices
-	glBufferData(GL_ARRAY_BUFFER, vxSize + txSize, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vxSize, &fbVertices);
-	glBufferSubData(GL_ARRAY_BUFFER, vxSize, txSize, &fbTex);
+	vbo.allocate(vxSize + txSize);
+	vbo.addSubElements(fbVertices);
+	vbo.addSubElements(fbTex);
+
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//glBufferData(GL_ARRAY_BUFFERvxSize + txSize,)
 
 	glBindVertexArray(vao);
 
@@ -45,7 +48,7 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 		glEnableVertexAttribArray(posAttrib);
 
 		GLint texAttrib = glGetAttribLocation(prog, "tex");
-		glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(vxSize));
+		glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 0, (void*)(vxSize));
 		glEnableVertexAttribArray(texAttrib);
 	}
 
@@ -113,7 +116,7 @@ void Framebuffer::resize(i32 width, i32 height)
 void Framebuffer::draw(mat4*)
 {
 	unbind();
-	glBindVertexArray(vao);
+	vao.bind();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, cb);
 	glUseProgram(prog);

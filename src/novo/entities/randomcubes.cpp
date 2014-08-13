@@ -14,7 +14,7 @@ using namespace gl;
 
 RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	Entity(basePosition), Drawable(),
-	cbo(Buffer(buffer::DrawCommand))
+	cbo(Buffer(buffer::DrawCommand, buffer::StaticDraw))
 {
 	std::vector<vec4> positions(amount);
 	std::vector<ubvec4> colors(amount);
@@ -29,7 +29,6 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 		colors[i] = ubvec4(colDist(rnd), colDist(rnd), colDist(rnd), 255);
 	}
 
-
 	DrawElementsIndrectCommand cmd = {0,0,0,0,0};
 	cmd.count = 36;
 	cmd.instanceCount = amount;
@@ -38,16 +37,16 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	size_t posSize = positions.size() * sizeof(positions[0]);
 	size_t colSize = colors.size() * sizeof(colors[0]);
 
-	vbo.reserve(vxSize + posSize + colSize, buffer::StaticDraw);
-	vbo.setSubElements(0, Cuboid::vertices.size(), Cuboid::vertices.data());
-	vbo.setSubElements(vxSize, positions.size(), positions.data());
-	vbo.setSubElements(vxSize + posSize, colors.size(), colors.data());
+	vbo.allocate(vxSize + posSize + colSize);
+	vbo.addSubElements(Cuboid::vertices);
+	vbo.addSubElements(positions);
+	vbo.addSubElements(colors);
 
-	ibo.setData(Cuboid::indices.size(), Cuboid::indices.data(), buffer::StaticDraw);
+	ibo.setElements(Cuboid::indices);
 
-	cbo.setData(cmd, buffer::StaticDraw);
+	cbo.setData(cmd);
 
-	glBindVertexArray(vao);
+	vao.bind();
 
 	prog = util::createProgramFromFiles("cubes.v.glsl", "cubes.f.glsl");
 	glUseProgram(prog);
@@ -76,7 +75,7 @@ RandomCubes::~RandomCubes()
 
 void RandomCubes::draw(mat4 *transform)
 {
-	glBindVertexArray(vao);
+	vao.bind();
 	ibo.bind();
 	cbo.bind();
 	glUniformMatrix4fv(glGetUniformLocation(prog, "model"), 1, GL_FALSE, glm::value_ptr(*transform * translate(scale(mat4(), vec3(2,2,2)), pos)));
