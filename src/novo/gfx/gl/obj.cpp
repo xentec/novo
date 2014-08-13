@@ -15,7 +15,7 @@ void createBuffers(const std::vector<GLuint*>& objPtrs) {
 
 	glGenBuffers(obj.size(), &*obj.begin());
 
-	for(uint i = 0; i < objPtrs.size(); i++) {
+    for(u32 i = 0; i < objPtrs.size(); i++) {
 		*(objPtrs[i]) = obj[i];
 	}
 }

@@ -6,10 +6,12 @@ using namespace novo::graphics;
 using std::string;
 
 namespace dtl {
+#ifdef OS_LINUX
 	#define GLFW_EXPOSE_NATIVE_X11 1
 	#define GLFW_EXPOSE_NATIVE_GLX 1
 
 	#include <GLFW/glfw3native.h>
+#endif
 }
 
 void setWindowHints(const WindowConfig &cfg);
@@ -53,7 +55,9 @@ void Window::open(bool fullscreen)
 
 	setCursorMode(CursorMode::DISABLED);
 
+#ifdef OS_LINUX
 	setXClassHint(this);
+#endif
 }
 
 bool Window::isOpen()
@@ -184,10 +188,9 @@ void setWindowHints(const WindowConfig &cfg) {
 	glfwWindowHint(GLFW_SAMPLES, cfg.samples);
 }
 
-
+#ifdef OS_LINUX
 void setXClassHint(Window *window)
 {
-
 	dtl::XClassHint xch;
 	xch.res_name = const_cast<char*>("gl"); 	// aka instance
 	xch.res_class =	const_cast<char*>(window->getTitle().c_str());
@@ -195,6 +198,7 @@ void setXClassHint(Window *window)
 	dtl::XSetClassHint(dtl::glfwGetX11Display(), dtl::glfwGetX11Window(*window), &xch);
 
 }
+#endif
 
 
 
