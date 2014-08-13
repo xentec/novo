@@ -21,7 +21,7 @@ protected:
 	Buffer vbo, ibo;
 public:
 	Drawable():
-		vbo(Buffer(Buffer::Vertex)), ibo(Buffer(Buffer::Index))
+		vbo(Buffer(buffer::Vertex)), ibo(Buffer(buffer::Index))
 	{
 		glGenVertexArrays(1, &vao);
 	}
