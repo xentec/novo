@@ -11,7 +11,7 @@ class Bindable : public Object {
 public:
 	void bind();
 protected:
-	enum ObjType : GLenum {
+	enum ObjType {
 		Buffer,
 		Texture,
 		Sampler,
@@ -20,20 +20,24 @@ protected:
 		Renderbuffer,
 	};
 
+	typedef void(*GenFunc)(GLsizei, GLuint*);
+	typedef void(*DelFunc)(GLsizei, const GLuint*);
 	typedef void(*BindFunc)(GLenum, GLuint);
 	typedef void(*BindFuncS)(GLuint);
 
-	Bindable(GLuint id, ObjType obj_type, BindFunc bind, GLenum sub_type);
-	Bindable(GLuint id, ObjType obj_type, BindFuncS bind);
+	Bindable(ObjType obj_type, GenFunc gen, DelFunc del, BindFunc bind, GLenum sub_type);
+	Bindable(ObjType obj_type, GenFunc gen, DelFunc del, BindFuncS bind);
+	virtual ~Bindable();
+
+	static GLuint glGen(Bindable::GenFunc glGen);
 
 	GLenum subType;
 private:
 	ObjType type;
 
+	DelFunc glDelete;
 	BindFunc glBind;
 	BindFuncS glBindS;
-
-	static std::unordered_map<GLenum, GLuint> bindings;
 };
 
 }

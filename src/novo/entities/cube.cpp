@@ -9,7 +9,7 @@ Cube::Cube(vec3 position, float size):
 	Entity(position), Drawable()
 {
 
-	util::createBuffers({&cbo});
+//	util::createBuffers({&cbo});
 /*	DrawElementsIndrectCommand cmd = {0,0,0,0,0};
 	cmd.count = 36;
 	cmd.instanceCount = amount;
@@ -47,7 +47,7 @@ Cube::Cube(vec3 position, float size):
 
 Cube::~Cube()
 {
-	util::destroyBuffers({cbo});
+//	util::destroyBuffers({cbo});
 }
 
 

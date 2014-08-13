@@ -2,38 +2,41 @@
 
 #include <novo/gfx/gl/names.h>
 
-static GLuint glGenBuffer() {
-	GLuint id;
-	glGenBuffers(1, &id);
-	return id;
-}
-
 namespace gl {
 
-Buffer::Buffer(buffer::Type type):
-	Buffer(type, glGenBuffer())
+Buffer::Buffer(buffer::Type type, buffer::Usage usage):
+	Bindable(Bindable::Buffer, glGenBuffers, glDeleteBuffers, glBindBuffer, type),
+	usage(usage), bufSize(0), bufOffset(0)
 {}
-
-Buffer::Buffer(buffer::Type type, GLuint id):
-	Bindable(id, Bindable::ObjType::Buffer, glBindBuffer, type)
-{}
-
 
 Buffer::~Buffer()
 {
 	glDeleteBuffers(1, &id);
 }
 
-void Buffer::reserve(u32 bytes_size, buffer::Usage usage)
+buffer::Usage Buffer::getUsage() const
 {
-	setData(bytes_size, nullptr, usage);
+	return usage;
 }
 
-void Buffer::setData(u32 bytes_size, const void *data, buffer::Usage usage)
+void Buffer::setUsage(const buffer::Usage &value)
+{
+	usage = value;
+}
+
+void Buffer::allocate(u32 bytes_size)
+{
+	setData(bytes_size, nullptr);
+}
+
+void Buffer::setData(u32 bytes_size, const void *data)
 {
 	bind();
 	glBufferData(subType, bytes_size, data, usage);
-	buffer_size = bytes_size;
+	bufSize = bytes_size;
+
+	if(data != nullptr)
+		bufOffset = bytes_size;
 }
 
 
@@ -43,32 +46,21 @@ void Buffer::setSubData(u32 bytes_offset, u32 bytes_size, const void *data)
 	glBufferSubData(subType, bytes_offset, bytes_size, data);
 }
 
-u32 Buffer::size() {
-	return buffer_size;
+void Buffer::addSubData(u32 bytes_size, const void* data)
+{
+	if(bufOffset + bytes_size > bufSize)
+		return; // TODO: Error
+
+	setSubData(bufOffset, bytes_size, data);
+	bufOffset += bytes_size;
 }
 
-// static
+u32 Buffer::size() const {
+	return bufSize;
+}
 
-std::vector<Buffer> Buffer::generate(buffer::Type type, u32 num, string prefix)
-{
-	std::vector<Buffer> buffs;
-	std::vector<GLuint> ids(num);
-
-	if(prefix.empty())
-		prefix = gl::names::buffer[type];
-
-	prefix.append(".");
-
-	buffs.reserve(num);
-	glGenBuffers(num, &*ids.begin());
-
-	for(u32 i = 1; i <= num; i++) {
-		Buffer b(type, ids[i]);
-		b.setLabel(prefix + std::to_string(ids[i]));
-
-		buffs.push_back(b);
-	}
-	return buffs;
+u32 Buffer::offset() const {
+	return bufOffset;
 }
 
 }

@@ -31,11 +31,6 @@ namespace util {
 
 using std::string;
 
-string glGetStringX(GLenum type);
-
-void createBuffers(const std::vector<GLuint*>& objPtrs);
-void destroyBuffers(const std::vector<GLuint>& obj);
-
 GLuint createShader(GLenum type, const string& source);
 GLuint createProgram(GLint vertexShader, GLint fragmentShader, GLint geometryShader = -1);
 GLuint createProgram(const string& vertexSource, const string& fragmentSource, const string& geometrySource = "");

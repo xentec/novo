@@ -2,31 +2,34 @@
 
 using namespace gl;
 
-Bindable::Bindable(GLuint id, ObjType obj_type, BindFunc bind, GLenum sub_type):
-	Object(id),
-	type(obj_type), glBind(bind), glBindS(nullptr), subType(sub_type)
+Bindable::Bindable(ObjType obj_type, GenFunc gen, DelFunc del, BindFunc bind, GLenum sub_type):
+	Object(glGen(gen)),
+	type(obj_type), subType(sub_type),
+	glDelete(del), glBind(bind), glBindS(nullptr)
 {}
 
-Bindable::Bindable(GLuint id, ObjType obj_type, BindFuncS bind):
-	Object(id),
-	type(obj_type), glBind(nullptr), glBindS(bind)
+Bindable::Bindable(ObjType obj_type, GenFunc gen, DelFunc del, BindFuncS bind):
+	Object(glGen(gen)),
+	type(obj_type),
+	glDelete(del), glBind(nullptr), glBindS(bind)
 {}
+
+Bindable::~Bindable()
+{
+	glDelete(1, &id);
+}
+
 
 void Bindable::bind()
 {
-	if(bindings.count(type) == 0) {
-		bindings.emplace(type, id);
-	} else {
-		if(bindings[type] == id)
-			return;
-
-		bindings[type] = id;
-	}
-
 	if(glBind)
 		glBind(subType, id);
 	else
 		glBindS(id);
 }
 
-std::unordered_map<GLenum, GLuint> Bindable::bindings;
+GLuint Bindable::glGen(Bindable::GenFunc glGen) {
+	GLuint id;
+	glGen(1, &id);
+	return id;
+}
