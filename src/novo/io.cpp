@@ -13,33 +13,33 @@ File::File(const string &path)
 
 }
 
-std::vector<u8> File::get(const string &path)
+std::vector<u8> File::getData(const std::string &path)
 {
-	using ifs = std::basic_ifstream<u8>;
-	ifs is(path, ifs::in | ifs::binary | ifs::ate);
-	if (!is.is_open())
-		throw std::runtime_error(string("Failed to open \"") + path + string("\""));
-
-/*	// get length of file:
-	i32 length = is.tellg();
-	is.seekg(0, is.beg);
-
-	std::vector<u8> data(length);
-
-	// pointer to data
-	is.read(reinterpret_cast<uchar>(*data.begin()), length);
-	is.close();
-*/
-    std::vector<u8> data((std::istreambuf_iterator<u8>(is)), (std::istreambuf_iterator<u8>()));
-
-	is.close();
-	return data;
+	return get<std::vector<u8>>(path);
 }
-
 string File::getText(const string &path)
 {
-	std::vector<u8> data = get(path);
-    return string(data.begin(), data.end());
+	return get<string>(path);
+}
+
+template<typename Result>
+Result File::get(const string &path)
+{
+	using ifs = std::ifstream;
+	ifs in(path, ifs::binary);
+	if (!in.is_open())
+		throw std::runtime_error(string("Failed to open \"") + path + string("\""));
+
+	// Thanks to <insane coder> for performance tests
+	// http://insanecoding.blogspot.de/2011/11/how-to-read-in-file-in-c.html
+	Result data;
+	in.seekg(0, std::ios::end);
+	data.resize(in.tellg());
+	in.seekg(0, std::ios::beg);
+	in.read(reinterpret_cast<char*>(&data[0]), data.size());
+
+	in.close();
+	return data;
 }
 
 }}
