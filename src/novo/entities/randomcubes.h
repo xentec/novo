@@ -9,9 +9,11 @@ using namespace glm;
 using novo::entities::Entity;
 using novo::graphics::Drawable;
 
+using gl::Buffer;
+
 class RandomCubes : public Entity, public Drawable
 {
-	GLuint cbo;
+	Buffer cbo;
 public:
 	RandomCubes(uint amount, i32 range, vec3 basePosition, vec3 scale = vec3(1));
 	~RandomCubes();

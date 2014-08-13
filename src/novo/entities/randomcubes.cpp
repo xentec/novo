@@ -3,22 +3,21 @@
 #include <novo/gfx/rendering/cuboid.h>
 #include <novo/gfx/gl/obj.h>
 
-#include <vector>
-#include <random>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
+#include <random>
+
 using namespace novo::graphics;
+using namespace gl;
 
 RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
-	Entity(basePosition), Drawable()
+	Entity(basePosition), Drawable(),
+	cbo(Buffer(buffer::DrawCommand))
 {
 	std::vector<vec4> positions(amount);
-	size_t posSize = positions.size() * sizeof(positions[0]);
-
 	std::vector<ubvec4> colors(amount);
-	size_t colSize = colors.size() * sizeof(colors[0]);
-
 
 	std::random_device rd;
 	std::default_random_engine rnd(rd());
@@ -35,21 +34,18 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	cmd.count = 36;
 	cmd.instanceCount = amount;
 
-	util::createBuffers({&cbo});
+	size_t vxSize = Cuboid::vertices.size() * sizeof(Cuboid::vertices[0]);
+	size_t posSize = positions.size() * sizeof(positions[0]);
+	size_t colSize = colors.size() * sizeof(colors[0]);
 
-	size_t vxSize = sizeof(Cuboid::vertices);
+	vbo.reserve(vxSize + posSize + colSize, buffer::StaticDraw);
+	vbo.setSubElements(0, Cuboid::vertices.size(), Cuboid::vertices.data());
+	vbo.setSubElements(vxSize, positions.size(), positions.data());
+	vbo.setSubElements(vxSize + posSize, colors.size(), colors.data());
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vxSize + posSize + colSize, nullptr, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vxSize, &Cuboid::vertices);
-	glBufferSubData(GL_ARRAY_BUFFER, vxSize, posSize, &*positions.begin());
-	glBufferSubData(GL_ARRAY_BUFFER, vxSize + posSize, colSize, &*colors.begin());
+	ibo.setData(Cuboid::indices.size(), Cuboid::indices.data(), buffer::StaticDraw);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Cuboid::indices), &Cuboid::indices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, cbo);
-	glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(cmd), &cmd, GL_STATIC_DRAW);
+	cbo.setData(cmd, buffer::StaticDraw);
 
 	glBindVertexArray(vao);
 
@@ -76,14 +72,13 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 
 RandomCubes::~RandomCubes()
 {
-	util::destroyBuffers({cbo});
 }
 
 void RandomCubes::draw(mat4 *transform)
 {
 	glBindVertexArray(vao);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, cbo);
+	ibo.bind();
+	cbo.bind();
 	glUniformMatrix4fv(glGetUniformLocation(prog, "model"), 1, GL_FALSE, glm::value_ptr(*transform * translate(scale(mat4(), vec3(2,2,2)), pos)));
 	glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_BYTE, nullptr);
 }
