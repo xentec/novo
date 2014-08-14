@@ -1,8 +1,5 @@
 #include "framebuffer.h"
 
-
-#include <novo/gfx/gl/obj.h>
-
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -32,16 +29,16 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 	vbo.addSubElements(fbVertices);
 	vbo.addSubElements(fbTex);
 
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glBufferData(GL_ARRAY_BUFFERvxSize + txSize,)
-
-	glBindVertexArray(vao);
+	vao.bind();
 
 	// Program
-	prog = util::createProgramFromFiles("screen.v.glsl", "screen.f.glsl");
-	glUseProgram(prog);
-	glUniform1i(glGetUniformLocation(prog, "fb"), 0);
+	prog.setLabel("FB");
+	prog.attach(Shader::load(shader::Vertex, "screen.v.glsl"));
+	prog.attach(Shader::load(shader::Fragment, "screen.f.glsl"));
+	prog.setFragDataLocation(0, "color");
+	prog.use();
 
+	glUniform1i(glGetUniformLocation(prog, "fb"), 0);
 	{
 		GLint posAttrib = glGetAttribLocation(prog, "pos");
 		glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -78,7 +75,6 @@ Framebuffer::~Framebuffer()
 {
 	unbind();
 	glDeleteFramebuffers(1, &fb);
-	glDeleteProgram(prog);
 	glDeleteTextures(1, &cb);
 	glDeleteRenderbuffers(1, &rbo);
 }
@@ -119,7 +115,7 @@ void Framebuffer::draw(mat4*)
 	vao.bind();
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, cb);
-	glUseProgram(prog);
+	prog.use();
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
@@ -127,9 +123,10 @@ void Framebuffer::draw(mat4*)
 void Framebuffer::render(Drawable* obj)
 {
 	bind();
-	glUseProgram(obj->getProgram());
-	glUniformMatrix4fv(glGetUniformLocation(obj->getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(cam->getView()));
-	glUniformMatrix4fv(glGetUniformLocation(obj->getProgram(), "proj"), 1, GL_FALSE, glm::value_ptr(cam->getProjection()));
+	Program p = obj->getProgram();
+	p.use();
+	glUniformMatrix4fv(glGetUniformLocation(p, "view"), 1, GL_FALSE, glm::value_ptr(cam->getView()));
+	glUniformMatrix4fv(glGetUniformLocation(p, "proj"), 1, GL_FALSE, glm::value_ptr(cam->getProjection()));
 	mat4 model;
 	obj->draw(&model);
 }
