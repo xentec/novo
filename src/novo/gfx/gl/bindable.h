@@ -10,7 +10,7 @@ namespace gl {
 
 class Bindable : public Object {
 public:
-	void bind();
+	const std::function<void()> bind;
 protected:
 	typedef void(*GenFuncN)(GLsizei, GLuint*);
 	typedef void(*DelFuncN)(GLsizei, const GLuint*);
@@ -23,10 +23,6 @@ protected:
 	static GLuint glGen(Bindable::GenFuncN glGen);
 
 	GLenum type;
-private:
-	DelFuncN glDelete;
-	BindFunc glBind;
-	BindFuncS glBindS;
 };
 
 }}
