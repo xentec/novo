@@ -8,8 +8,8 @@ Object::Object(GLuint gl_id, DelFunc func):
 	refs.emplace(id, 1);
 }
 
-Object::Object(GLuint gl_id, Object::DelFuncP func):
-	Object(gl_id, [&](GLuint i){ func(&i); })
+Object::Object(GLuint gl_id, DelFuncP func):
+	Object(gl_id, [=](GLuint i){ func(&i); })
 {}
 
 Object::Object(const Object& other):
@@ -19,8 +19,10 @@ Object::Object(const Object& other):
 }
 
 Object::~Object() {
-	if(--refs[id] == 0)
+	if(--refs[id] == 0) {
 		glDel(id);
+		refs.erase(id);
+	}
 }
 
 std::unordered_map<GLuint, u32> Object::refs;
