@@ -25,7 +25,7 @@ public:
 	{}
 
 	virtual void draw(mat4* transform) = 0;
-	Program* getProgram() { return &prog; }
+	Program getProgram() { return prog; }
 };
 
 }}

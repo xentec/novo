@@ -8,17 +8,13 @@ using namespace novo::gl;
 using novo::io::File;
 
 Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now):
-	Object(glCreateShader(shader_type)),
+	Object(glCreateShader(shader_type), glDeleteShader),
 	type(shader_type), source(glsl_source), compiled(false)
 {
 	if(source.size() && compile_now)
 		compile(source);
 }
 
-Shader::~Shader()
-{
-	glDeleteShader(id);
-}
 
 void Shader::compile(const string& glsl_source) {
 	if(glsl_source.size())
