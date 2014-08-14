@@ -12,7 +12,6 @@ class Program : public Object
 public:
 	Program();
 	Program(Shader& vertex, Shader& fragment, bool link_now = true);
-	~Program();
 
 	void attach(Shader shader);
 	void link();

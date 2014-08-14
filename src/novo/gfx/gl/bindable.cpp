@@ -2,22 +2,16 @@
 
 using namespace novo::gl;
 
-Bindable::Bindable(GenFunc gen, DelFunc del, BindFunc bind, GLenum sub_type):
-	Object(glGen(gen)),
+Bindable::Bindable(GenFuncN gen, DelFuncN del, BindFunc bind, GLenum sub_type):
+	Object(glGen(gen), std::bind(del, 1, std::placeholders::_1)),
 	type(sub_type),
 	glDelete(del), glBind(bind), glBindS(nullptr)
 {}
 
-Bindable::Bindable(GenFunc gen, DelFunc del, BindFuncS bind):
-	Object(glGen(gen)),
+Bindable::Bindable(GenFuncN gen, DelFuncN del, BindFuncS bind):
+	Object(glGen(gen), std::bind(del, 1, std::placeholders::_1)),
 	glDelete(del), glBind(nullptr), glBindS(bind)
 {}
-
-Bindable::~Bindable()
-{
-	glDelete(1, &id);
-}
-
 
 void Bindable::bind()
 {
@@ -27,7 +21,7 @@ void Bindable::bind()
 		glBindS(id);
 }
 
-GLuint Bindable::glGen(Bindable::GenFunc glGen) {
+GLuint Bindable::glGen(Bindable::GenFuncN glGen) {
 	GLuint id;
 	glGen(1, &id);
 	return id;

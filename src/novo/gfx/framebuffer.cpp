@@ -122,9 +122,10 @@ void Framebuffer::draw(mat4*)
 void Framebuffer::render(Drawable* obj)
 {
 	bind();
-	obj->getProgram()->use();
-	glUniformMatrix4fv(glGetUniformLocation(*obj->getProgram(), "view"), 1, GL_FALSE, glm::value_ptr(cam->getView()));
-	glUniformMatrix4fv(glGetUniformLocation(*obj->getProgram(), "proj"), 1, GL_FALSE, glm::value_ptr(cam->getProjection()));
+	Program p = obj->getProgram();
+	p.use();
+	glUniformMatrix4fv(glGetUniformLocation(p, "view"), 1, GL_FALSE, glm::value_ptr(cam->getView()));
+	glUniformMatrix4fv(glGetUniformLocation(p, "proj"), 1, GL_FALSE, glm::value_ptr(cam->getProjection()));
 	mat4 model;
 	obj->draw(&model);
 }

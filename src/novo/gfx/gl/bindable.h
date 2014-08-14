@@ -12,20 +12,19 @@ class Bindable : public Object {
 public:
 	void bind();
 protected:
-	typedef void(*GenFunc)(GLsizei, GLuint*);
-	typedef void(*DelFunc)(GLsizei, const GLuint*);
+	typedef void(*GenFuncN)(GLsizei, GLuint*);
+	typedef void(*DelFuncN)(GLsizei, const GLuint*);
 	typedef void(*BindFunc)(GLenum, GLuint);
 	typedef void(*BindFuncS)(GLuint);
 
-	Bindable(GenFunc gen, DelFunc del, BindFunc bind, GLenum sub_type);
-	Bindable(GenFunc gen, DelFunc del, BindFuncS bind);
-	virtual ~Bindable();
+	Bindable(GenFuncN gen, DelFuncN del, BindFunc bind, GLenum sub_type);
+	Bindable(GenFuncN gen, DelFuncN del, BindFuncS bind);
 
-	static GLuint glGen(Bindable::GenFunc glGen);
+	static GLuint glGen(Bindable::GenFuncN glGen);
 
 	GLenum type;
 private:
-	DelFunc glDelete;
+	DelFuncN glDelete;
 	BindFunc glBind;
 	BindFuncS glBindS;
 };

@@ -3,7 +3,7 @@
 using namespace novo::gl;
 
 Program::Program():
-	Object(glCreateProgram()), linked(false)
+	Object(glCreateProgram(), glDeleteProgram), linked(false)
 {
 }
 
@@ -14,11 +14,6 @@ Program::Program(Shader& vertex, Shader& fragment, bool link_now):
 	attach(fragment);
 	if(link_now)
 		link();
-}
-
-Program::~Program()
-{
-	glDeleteProgram(id);
 }
 
 void Program::attach(Shader shader)
@@ -43,7 +38,7 @@ void Program::link()
 		string buffer(length, ' ');
 		glGetProgramInfoLog(id, length, nullptr, &buffer[0]);
 
-		throw std::runtime_error(string("Program ")+label+string(" failed to link!\n") + buffer);
+		throw std::runtime_error(string("Program ")+getLabel()+string(" failed to link!\n") + buffer);
 	}
 	linked = true;
 }
