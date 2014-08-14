@@ -68,9 +68,6 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	glVertexAttribPointer(atribCubeColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (void*) (vxSize + posSize));
 	glEnableVertexAttribArray(atribCubeColor);
 	glVertexAttribDivisor(atribCubeColor, 1);
-
-	glUseProgram(0);
-
 }
 
 RandomCubes::~RandomCubes()

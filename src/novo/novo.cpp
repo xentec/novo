@@ -202,7 +202,7 @@ void Novo::onKey(i32 key, i32 scancode, i32 action, i32 mod) {
 				case GLFW_KEY_TAB:
 					static int e;
 					if(++e > 5) e = 0;
-					glUniform1i(glGetUniformLocation(screen->getProgram(), "effectFlag"), e);
+					glUniform1i(glGetUniformLocation(*screen->getProgram(), "effectFlag"), e);
 					break;
 
 			}
@@ -257,7 +257,6 @@ static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GL
 	cerr.flush();
 	*/
 	if(severity == GL_DEBUG_SEVERITY_HIGH)
-		//(reinterpret_cast<Novo*>(userParam))->getMainWindow()->close();
 		throw novo::NovoException("OpenGL critical error");
 }
 
