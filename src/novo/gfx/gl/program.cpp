@@ -1,6 +1,6 @@
 #include "program.h"
 
-using namespace gl;
+using namespace novo::gl;
 
 Program::Program():
 	Object(glCreateProgram()), linked(false)

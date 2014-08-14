@@ -1,6 +1,5 @@
 #include "framebuffer.h"
 
-#include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <array>
@@ -33,8 +32,8 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 
 	// Program
 	prog.setLabel("FB");
-	prog.attach(Shader::load(shader::Vertex, "screen.v.glsl"));
-	prog.attach(Shader::load(shader::Fragment, "screen.f.glsl"));
+	prog.attach(Shader::load(ShaderType::Vertex, "screen.v.glsl"));
+	prog.attach(Shader::load(ShaderType::Fragment, "screen.f.glsl"));
 	prog.setFragDataLocation(0, "color");
 	prog.use();
 
@@ -55,10 +54,10 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 
 	resize(width, height); // Initialize texture and renderbuffer
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<int>(GL_LINEAR));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<int>(GL_LINEAR));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<int>(GL_CLAMP_TO_BORDER));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<int>(GL_CLAMP_TO_BORDER));
 
 	bind();
 
@@ -100,7 +99,7 @@ void Framebuffer::resize(i32 width, i32 height)
 
 	glBindTexture(GL_TEXTURE_2D, cb);
 	glTexImage2D(GL_TEXTURE_2D,
-				 0, GL_RGB,
+				 0, static_cast<int>(GL_RGB),
 				 width, height,
 				 0, GL_RGB,
 				 GL_UNSIGNED_BYTE, nullptr);

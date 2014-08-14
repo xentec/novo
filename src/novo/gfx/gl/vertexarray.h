@@ -3,6 +3,7 @@
 
 #include "bindable.h"
 
+namespace novo {
 namespace gl {
 
 class VertexArray : public Bindable
@@ -11,6 +12,6 @@ public:
 	VertexArray();
 };
 
-}
+}}
 
 #endif // VERTEXARRAY_H

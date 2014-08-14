@@ -3,9 +3,21 @@
 
 #include <novo/global.h>
 
-#include <GL/glew.h>
+#include <glbinding/gl/gl.h>
 
+namespace novo {
 namespace gl {
+
+using namespace ::gl;
+
+struct DrawElementsIndrectCommand {
+	GLuint
+		count,
+		instanceCount,
+		firstIndex,
+		baseVertex,
+		baseInstance;
+};
 
 class Object
 {
@@ -22,6 +34,6 @@ protected:
 	string label;
 };
 
-}
+}}
 
 #endif // OBJECT_H

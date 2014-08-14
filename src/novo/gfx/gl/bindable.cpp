@@ -1,16 +1,15 @@
 #include "bindable.h"
 
-using namespace gl;
+using namespace novo::gl;
 
-Bindable::Bindable(ObjType obj_type, GenFunc gen, DelFunc del, BindFunc bind, GLenum sub_type):
+Bindable::Bindable(GenFunc gen, DelFunc del, BindFunc bind, GLenum sub_type):
 	Object(glGen(gen)),
-	type(obj_type), subType(sub_type),
+	type(sub_type),
 	glDelete(del), glBind(bind), glBindS(nullptr)
 {}
 
-Bindable::Bindable(ObjType obj_type, GenFunc gen, DelFunc del, BindFuncS bind):
+Bindable::Bindable(GenFunc gen, DelFunc del, BindFuncS bind):
 	Object(glGen(gen)),
-	type(obj_type),
 	glDelete(del), glBind(nullptr), glBindS(bind)
 {}
 
@@ -23,7 +22,7 @@ Bindable::~Bindable()
 void Bindable::bind()
 {
 	if(glBind)
-		glBind(subType, id);
+		glBind(type, id);
 	else
 		glBindS(id);
 }

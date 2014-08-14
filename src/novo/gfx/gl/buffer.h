@@ -5,53 +5,50 @@
 
 #include <vector>
 
+namespace novo {
 namespace gl {
 
-namespace buffer {
-	enum Type : GLenum {
-		Vertex = GL_ARRAY_BUFFER,
-		Data = Vertex,
-		Index = GL_ELEMENT_ARRAY_BUFFER,
-		Uniform = GL_UNIFORM_BUFFER,
-		DrawCommand = GL_DRAW_INDIRECT_BUFFER,
-		Shader = GL_SHADER_STORAGE_BUFFER,
-		TransformFeedback = GL_TRANSFORM_FEEDBACK_BUFFER,
-	};
+namespace BufferType {
+	static const GLenum Vertex = GL_ARRAY_BUFFER;
+	static const GLenum Data = Vertex;
+	static const GLenum Index = GL_ELEMENT_ARRAY_BUFFER;
+	static const GLenum Uniform = GL_UNIFORM_BUFFER;
+	static const GLenum DrawCommand = GL_DRAW_INDIRECT_BUFFER;
+	static const GLenum Shader = GL_SHADER_STORAGE_BUFFER;
+	static const GLenum TransformFeedback = GL_TRANSFORM_FEEDBACK_BUFFER;
+}
 
-	enum Usage : GLenum {
-		StaticDraw = GL_STATIC_DRAW,
-		StaticRead = GL_STATIC_READ,
-		StaticCopy = GL_STATIC_COPY,
+namespace BufferUsage {
+	static const GLenum StaticDraw = GL_STATIC_DRAW;
+	static const GLenum StaticRead = GL_STATIC_READ;
+	static const GLenum StaticCopy = GL_STATIC_COPY;
+	static const GLenum DynamicDraw = GL_DYNAMIC_DRAW;
+	static const GLenum DynamicRead = GL_DYNAMIC_READ;
+	static const GLenum DynamicCopy = GL_DYNAMIC_COPY;
+	static const GLenum StreamDraw = GL_STREAM_DRAW;
+	static const GLenum StreamRead = GL_STREAM_READ;
+	static const GLenum StreamCopy = GL_STREAM_COPY;
+}
 
-		DynamicDraw = GL_DYNAMIC_DRAW,
-		DynamicRead = GL_DYNAMIC_READ,
-		DynamicCopy = GL_DYNAMIC_COPY,
-
-		StreamDraw = GL_STREAM_DRAW,
-		StreamRead = GL_STREAM_READ,
-		StreamCopy = GL_STREAM_COPY,
-	};
-
-	enum Access : GLenum {
-		Read = GL_MAP_READ_BIT,
-		Write = GL_MAP_WRITE_BIT,
-		Persistent = GL_MAP_PERSISTENT_BIT,
-		Coherent = GL_MAP_COHERENT_BIT,
-		Unsychronized = GL_MAP_UNSYNCHRONIZED_BIT,
-		FlushExplicit = GL_MAP_FLUSH_EXPLICIT_BIT,
-		InvalidateBuffer = GL_MAP_INVALIDATE_BUFFER_BIT,
-		InvalidateRange = GL_MAP_INVALIDATE_RANGE_BIT,
-	};
+namespace BufferAccess {
+	static const auto Read = GL_MAP_READ_BIT;
+	static const auto Write = GL_MAP_WRITE_BIT;
+	static const auto Persistent = GL_MAP_PERSISTENT_BIT;
+	static const auto Coherent = GL_MAP_COHERENT_BIT;
+	static const auto Unsychronized = GL_MAP_UNSYNCHRONIZED_BIT;
+	static const auto FlushExplicit = GL_MAP_FLUSH_EXPLICIT_BIT;
+	static const auto InvalidateBuffer = GL_MAP_INVALIDATE_BUFFER_BIT;
+	static const auto InvalidateRange = GL_MAP_INVALIDATE_RANGE_BIT;
 }
 
 class Buffer : public Bindable
 {
 public:
-	Buffer(buffer::Type type, buffer::Usage usage);
+	Buffer(GLenum type, GLenum usage);
 	~Buffer();
 
-	buffer::Usage getUsage() const;
-	void setUsage(const buffer::Usage &value);
+	GLenum getUsage() const;
+	void setUsage(GLenum value);
 
 	void allocate(u32 bytes_size);
 
@@ -92,17 +89,16 @@ public:
 	void addSubElements(const Container& data) { addSubElements(data.size(), &*(data.begin())); }
 
 	//TODO: MapBuffer
-	const void* map(buffer::Access bitfield);
+	const void* map(GLenum bitfield);
 
 	u32 size() const;
 	u32 offset() const;
 private:
-	buffer::Usage usage;
-	buffer::Type type;
+	GLenum usage;
 	u32 bufSize;
 	u32 bufOffset;
 };
 
-}
+}}
 
 #endif // BUFFER_H

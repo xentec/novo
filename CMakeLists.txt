@@ -1,28 +1,34 @@
-project(Novo)
 cmake_minimum_required(VERSION 2.8)
+project(Novo)
+
 
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+
 
 find_package(Boost COMPONENTS system thread filesystem program_options REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glfw REQUIRED)
-find_package(GLEW REQUIRED)
+#find_package(GLEW REQUIRED)
 find_package(GLM REQUIRED)
+find_package(glbinding REQUIRED)
 
 include_directories(
 	${Boost_INCLUDE_DIRS}
 	${OPENGL_INCLUDE_DIRS}
 	${GLFW_INCLUDE_PATH}
-	${GLEW_INCLUDE_DIRS}
+#	${GLEW_INCLUDE_DIRS}
+	${GLBINDING_INCLUDES}
 	${GLM_INCLUDE_DIRS}
 )
 
 list(APPEND LIBS
 	${Boost_LIBRARIES}
 	${GLFW_LIBRARY}
-	${GLEW_LIBRARY}
+#	${GLEW_LIBRARY}
+	${GLBINDING_LIBRARY}
 	${OPENGL_LIBRARIES}
 )
+
 
 string(TOUPPER ${CMAKE_SYSTEM_NAME} OS_NAME)
 configure_file("${CMAKE_SOURCE_DIR}/src/novo/config.h.in" "${CMAKE_SOURCE_DIR}/src/novo/config.h")

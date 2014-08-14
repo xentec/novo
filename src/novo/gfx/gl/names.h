@@ -1,15 +1,16 @@
 #ifndef NAMES_H
 #define NAMES_H
 
+#include "object.h"
+
 #include <novo/global.h>
 
-#include <GL/glew.h>
-#include <map>
+#include <unordered_map>
 
 namespace gl {
 namespace names {
 
-static std::map<GLenum, std::string>
+static std::unordered_map<GLenum, std::string>
 debug {
 	// Source
 	{GL_DEBUG_SOURCE_API, "API"},
