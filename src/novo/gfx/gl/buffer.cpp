@@ -2,10 +2,10 @@
 
 #include <novo/gfx/gl/names.h>
 
-namespace gl {
+using namespace novo::gl;
 
-Buffer::Buffer(buffer::Type type, buffer::Usage usage):
-	Bindable(Bindable::Buffer, glGenBuffers, glDeleteBuffers, glBindBuffer, type),
+Buffer::Buffer(GLenum type, GLenum usage):
+	Bindable(glGenBuffers, glDeleteBuffers, glBindBuffer, type),
 	usage(usage), bufSize(0), bufOffset(0)
 {}
 
@@ -14,12 +14,12 @@ Buffer::~Buffer()
 	glDeleteBuffers(1, &id);
 }
 
-buffer::Usage Buffer::getUsage() const
+GLenum Buffer::getUsage() const
 {
 	return usage;
 }
 
-void Buffer::setUsage(const buffer::Usage &value)
+void Buffer::setUsage(GLenum value)
 {
 	usage = value;
 }
@@ -32,7 +32,7 @@ void Buffer::allocate(u32 bytes_size)
 void Buffer::setData(u32 bytes_size, const void *data)
 {
 	bind();
-	glBufferData(subType, bytes_size, data, usage);
+	glBufferData(type, bytes_size, data, usage);
 	bufSize = bytes_size;
 
 	if(data != nullptr)
@@ -43,7 +43,7 @@ void Buffer::setData(u32 bytes_size, const void *data)
 void Buffer::setSubData(u32 bytes_offset, u32 bytes_size, const void *data)
 {
 	bind();
-	glBufferSubData(subType, bytes_offset, bytes_size, data);
+	glBufferSubData(type, bytes_offset, bytes_size, data);
 }
 
 void Buffer::addSubData(u32 bytes_size, const void* data)
@@ -61,6 +61,4 @@ u32 Buffer::size() const {
 
 u32 Buffer::offset() const {
 	return bufOffset;
-}
-
 }

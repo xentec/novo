@@ -10,12 +10,9 @@
 
 typedef detail::tvec4<u8, highp>		ubvec4;
 
-using namespace novo::graphics;
-using namespace gl;
-
 RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	Entity(basePosition), Drawable(),
-	cbo(Buffer(buffer::DrawCommand, buffer::StaticDraw))
+	cbo(Buffer(BufferType::DrawCommand, BufferUsage::StaticDraw))
 {
 	std::vector<vec4> positions(amount);
 	std::vector<ubvec4> colors(amount);
@@ -50,8 +47,8 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	vao.bind();
 
 	prog.setLabel("RandomCubes");
-	prog.attach(Shader::load(shader::Vertex, "cubes.v.glsl"));
-	prog.attach(Shader::load(shader::Fragment, "cubes.f.glsl"));
+	prog.attach(Shader::load(ShaderType::Vertex, "cubes.v.glsl"));
+	prog.attach(Shader::load(ShaderType::Fragment, "cubes.f.glsl"));
 	prog.setFragDataLocation(0, "color");
 	prog.use();
 

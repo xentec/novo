@@ -4,6 +4,7 @@
 #include "object.h"
 #include "shader.h"
 
+namespace novo {
 namespace gl {
 
 class Program : public Object
@@ -23,5 +24,5 @@ private:
 	bool linked;
 };
 
-}
+}}
 #endif // PROGRAM_H

@@ -9,8 +9,6 @@ using namespace glm;
 using novo::entities::Entity;
 using novo::graphics::Drawable;
 
-using gl::Buffer;
-
 class RandomCubes : public Entity, public Drawable
 {
 	Buffer cbo;

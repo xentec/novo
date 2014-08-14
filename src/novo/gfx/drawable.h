@@ -2,26 +2,14 @@
 #define DRAWABLE_H
 
 #include <novo/gfx/camera.h>
-#include <novo/gfx/gl/vertexarray.h>
-#include <novo/gfx/gl/buffer.h>
-#include <novo/gfx/gl/program.h>
+#include <novo/gfx/gl/gl.h>
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
+
+using namespace novo::gl;
 
 namespace novo {
 namespace graphics {
-
-using namespace gl;
-
-struct DrawElementsIndrectCommand {
-	GLuint
-		count,
-		instanceCount,
-		firstIndex,
-		baseVertex,
-		baseInstance;
-};
 
 class Drawable
 {
@@ -31,8 +19,8 @@ protected:
 	Program prog;
 public:
 	Drawable():
-		vbo(Buffer(buffer::Vertex, buffer::StaticDraw)),
-		ibo(Buffer(buffer::Index, buffer::StaticDraw)),
+		vbo(Buffer(BufferType::Vertex, BufferUsage::StaticDraw)),
+		ibo(Buffer(BufferType::Index,  BufferUsage::StaticDraw)),
 		prog(Program())
 	{}
 

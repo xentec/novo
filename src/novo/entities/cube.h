@@ -11,7 +11,7 @@ using novo::graphics::Drawable;
 
 class Cube : public Entity, public Drawable
 {
-	GLuint cbo;
+	Buffer cbo;
 public:
 	Cube(vec3 position, float size);
 	~Cube();

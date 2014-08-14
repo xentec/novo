@@ -4,12 +4,12 @@
 
 #include <novo/io.h>
 
-using namespace gl;
+using namespace novo::gl;
 using novo::io::File;
 
-Shader::Shader(shader::Type type, const string& glsl_source, bool compile_now):
-	Object(glCreateShader(type)),
-	type(type), source(glsl_source), compiled(false)
+Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now):
+	Object(glCreateShader(shader_type)),
+	type(shader_type), source(glsl_source), compiled(false)
 {
 	if(source.size() && compile_now)
 		compile(source);
@@ -49,11 +49,12 @@ bool Shader::isCompiled() const
 	return compiled;
 }
 
-Shader Shader::load(shader::Type type, const string& path, bool compile_now)
+Shader Shader::load(GLenum shader_type, const string& path, bool compile_now)
 {
 	// TODO: Ressource management
 	static const string prefix = "res/shaders/";
-	return Shader(type, File::getText(prefix + path), compile_now);
+
+	return Shader(shader_type, File::getText(prefix + path), compile_now);
 }
 
 

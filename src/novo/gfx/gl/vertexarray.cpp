@@ -1,10 +1,9 @@
 #include "vertexarray.h"
 
-using namespace gl;
+using namespace novo::gl;
 
 VertexArray::VertexArray():
-	Bindable(Bindable::VertexArray,
-			 glGenVertexArrays,
+	Bindable(glGenVertexArrays,
 			 glDeleteVertexArrays,
 			 glBindVertexArray)
 {
