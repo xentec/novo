@@ -1,13 +1,14 @@
 #include "randomcubes.h"
 
 #include <novo/gfx/rendering/cuboid.h>
-#include <novo/gfx/gl/obj.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <vector>
 #include <random>
+
+typedef detail::tvec4<u8, highp>		ubvec4;
 
 using namespace novo::graphics;
 using namespace gl;
@@ -48,8 +49,11 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 
 	vao.bind();
 
-	prog = util::createProgramFromFiles("cubes.v.glsl", "cubes.f.glsl");
-	glUseProgram(prog);
+	prog.setLabel("RandomCubes");
+	prog.attach(Shader::load(shader::Vertex, "cubes.v.glsl"));
+	prog.attach(Shader::load(shader::Fragment, "cubes.f.glsl"));
+	prog.setFragDataLocation(0, "color");
+	prog.use();
 
 	GLint atribBasePos = glGetAttribLocation(prog, "basePos");
 	glVertexAttribPointer(atribBasePos, 4, GL_FLOAT, GL_FALSE, 0, nullptr);

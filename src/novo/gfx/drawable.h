@@ -2,9 +2,9 @@
 #define DRAWABLE_H
 
 #include <novo/gfx/camera.h>
-#include <novo/gfx/gl/obj.h>
 #include <novo/gfx/gl/vertexarray.h>
 #include <novo/gfx/gl/buffer.h>
+#include <novo/gfx/gl/program.h>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -14,11 +14,20 @@ namespace graphics {
 
 using namespace gl;
 
+struct DrawElementsIndrectCommand {
+	GLuint
+		count,
+		instanceCount,
+		firstIndex,
+		baseVertex,
+		baseInstance;
+};
+
 class Drawable
 {
 protected:
 	VertexArray vao;
-	GLint prog;
+	Program prog;
 	Buffer vbo, ibo;
 public:
 	Drawable():
@@ -26,7 +35,7 @@ public:
 	{}
 
 	virtual void draw(mat4* transform) = 0;
-	GLint getProgram() const { return prog; }
+	Program getProgram() const { return prog; }
 };
 
 }}

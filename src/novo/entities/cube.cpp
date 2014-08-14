@@ -1,7 +1,6 @@
 #include "cube.h"
 
 #include <novo/gfx/rendering/cuboid.h>
-#include <novo/gfx/gl/obj.h>
 
 using namespace novo::graphics;
 
