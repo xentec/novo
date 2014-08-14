@@ -27,15 +27,17 @@ class Drawable
 {
 protected:
 	VertexArray vao;
-	Program prog;
 	Buffer vbo, ibo;
+	Program prog;
 public:
 	Drawable():
-		vbo(Buffer(buffer::Vertex, buffer::StaticDraw)), ibo(Buffer(buffer::Index, buffer::StaticDraw))
+		vbo(Buffer(buffer::Vertex, buffer::StaticDraw)),
+		ibo(Buffer(buffer::Index, buffer::StaticDraw)),
+		prog(Program())
 	{}
 
 	virtual void draw(mat4* transform) = 0;
-	Program getProgram() const { return prog; }
+	Program* getProgram() { return &prog; }
 };
 
 }}

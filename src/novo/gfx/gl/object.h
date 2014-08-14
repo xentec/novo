@@ -17,8 +17,8 @@ public:
 protected:
 	Object(GLuint gl_id):
 		id(gl_id), label("") {}
+
 	const GLuint id;
-private:
 	string label;
 };
 
