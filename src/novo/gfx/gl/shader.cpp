@@ -15,6 +15,10 @@ Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now):
 		compile(source);
 }
 
+GLenum Shader::getType() const
+{
+	return type;
+}
 
 void Shader::compile(const string& glsl_source) {
 	if(glsl_source.size())
@@ -52,5 +56,7 @@ Shader Shader::load(GLenum shader_type, const string& path, bool compile_now)
 
 	return Shader(shader_type, File::getText(prefix + path), compile_now);
 }
+
+
 
 

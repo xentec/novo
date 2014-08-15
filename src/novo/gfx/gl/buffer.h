@@ -3,7 +3,7 @@
 
 #include "bindable.h"
 
-#include <vector>
+#include <novo/util.h>
 
 namespace novo {
 namespace gl {
@@ -60,33 +60,20 @@ public:
 
 	// single structs
 	template<typename T>
-	void setData(const T& data) { setElements(1, &data); }
-
-	// for arrays
-	template<typename T>
-	void setElements(u32 size, const T* data) { setData(sizeof(T)*size, data); }
-
-	template<typename T>
-	void setSubElements(u32 size, const T* data) { setSubElements(0, size, data); }
-
-	template<typename T>
-	void setSubElements(u32 bytes_offset, u32 size, const T* data) { setSubData(bytes_offset, sizeof(T)*size, data); }
-
-	template<typename T>
-	void addSubElements(u32 size, const T* data) { addSubData(sizeof(T)*size, data); }
+	void setData(const T& data) { setData(byteSize(&data), &data); }
 
 	// for stl container
-	template<typename Container>
-	void setElements(const Container& data) { setElements(data.size(), &*(data.begin())); }
+	template<typename Container, typename... Args>
+	void allocateElements(const Container& ctr, const Args&... args) { allocate(byteSize(ctr), args...); }
 
 	template<typename Container>
-	void setSubElements(const Container& data) { setSubElements(0, data); }
+	void setElements(const Container& data) { setData(byteSize(data), &*(data.begin())); }
 
 	template<typename Container>
-	void setSubElements(u32 bytes_offset, const Container& data) { setSubElements(bytes_offset, data.size(), &*(data.begin())); }
+	void setSubElements(u32 bytes_offset, const Container& data) { setSubData(bytes_offset, byteSize(data), &*(data.begin())); }
 
 	template<typename Container>
-	void addSubElements(const Container& data) { addSubElements(data.size(), &*(data.begin())); }
+	void addSubElements(const Container& data) { addSubData(byteSize(data), &*(data.begin())); }
 
 	//TODO: MapBuffer
 	const void* map(GLenum bitfield);
@@ -97,6 +84,10 @@ private:
 	GLenum usage;
 	u32 bufSize;
 	u32 bufOffset;
+
+	// Madness
+	template<typename Container, typename... Args>
+	void allocate(u32 bytes_size, const Container& ctr, const Args&... args) { allocate(byteSize(ctr) + bytes_size, args...); }
 };
 
 }}

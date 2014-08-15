@@ -20,33 +20,20 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 	Drawable(), Renderer(),
 	cam(camera)
 {
-	size_t vxSize = sizeof(fbVertices);
-	size_t txSize = sizeof(fbTex);
-
-	// Upload the vertices
-	vbo.allocate(vxSize + txSize);
-	vbo.addSubElements(fbVertices);
-	vbo.addSubElements(fbTex);
-
-	vao.bind();
-
 	// Program
 	prog.setLabel("FB");
 	prog.attach(Shader::load(ShaderType::Vertex, "screen.v.glsl"));
 	prog.attach(Shader::load(ShaderType::Fragment, "screen.f.glsl"));
-	prog.setFragDataLocation(0, "color");
+	prog.bindFragDataLocation(0, "color");
 	prog.use();
 
-	glUniform1i(glGetUniformLocation(prog, "fb"), 0);
-	{
-		GLint posAttrib = glGetAttribLocation(prog, "pos");
-		glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-		glEnableVertexAttribArray(posAttrib);
+	// Upload the vertices
+	vbo.allocateElements(fbVertices, fbTex);
 
-		GLint texAttrib = glGetAttribLocation(prog, "tex");
-		glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 0, (void*)(vxSize));
-		glEnableVertexAttribArray(texAttrib);
-	}
+	vao.addAttribute(vbo, fbVertices, prog.getAttribute("pos"), 2, DataType::Float);
+	vao.addAttribute(vbo, fbTex, prog.getAttribute("tex"), 2, DataType::Float);
+
+	prog.setUniform("fb", 0);
 
 	glGenTextures(1, &cb);
 	glGenRenderbuffers(1, &rbo);
@@ -124,8 +111,9 @@ void Framebuffer::render(Drawable* obj)
 	bind();
 	Program p = obj->getProgram();
 	p.use();
-	glUniformMatrix4fv(glGetUniformLocation(p, "view"), 1, GL_FALSE, glm::value_ptr(cam->getView()));
-	glUniformMatrix4fv(glGetUniformLocation(p, "proj"), 1, GL_FALSE, glm::value_ptr(cam->getProjection()));
+	p.setUniform("view", cam->getView());
+	p.setUniform("proj", cam->getProjection());
+
 	mat4 model;
 	obj->draw(&model);
 }

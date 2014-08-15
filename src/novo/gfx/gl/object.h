@@ -22,6 +22,19 @@ struct DrawElementsIndrectCommand {
 		baseInstance;
 };
 
+namespace DataType {
+	static const GLenum Byte = GL_BYTE;
+	static const GLenum UByte = GL_UNSIGNED_BYTE;
+	static const GLenum Short = GL_SHORT;
+	static const GLenum UShort = GL_UNSIGNED_SHORT;
+	static const GLenum Int = GL_INT;
+	static const GLenum UInt = GL_UNSIGNED_INT;
+
+	static const GLenum HalfFloat = GL_HALF_FLOAT;
+	static const GLenum Float = GL_FLOAT;
+	static const GLenum Double = GL_DOUBLE;
+}
+
 class Object
 {
 public:
@@ -48,6 +61,22 @@ private:
 	static std::unordered_map<GLuint, u32> refs;
 };
 
+namespace dtl {
+
+template <GLenum N>
+struct TypeSize
+{
+	enum { size =
+		   (N == DataType::HalfFloat)	? sizeof(f32)/2 :
+		   (N == DataType::Float)		? sizeof(f32) :
+		   (N == DataType::Double)		? sizeof(f64) :
+
+		   (N == DataType::Int  || N == DataType::UInt)		? sizeof(i32) :
+		   (N == DataType::Short|| N == DataType::UShort)	? sizeof(i16) : sizeof(i8)
+		 };
+};
+
+}
 
 }}
 
