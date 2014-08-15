@@ -80,7 +80,7 @@ i32 Novo::run() {
 	sptr<Camera> cam(new Camera(vec3(0), 800, 600));
 	screen = sptr<Framebuffer>(new Framebuffer(800, 600, cam, false));
 
-	u32 size = 64;
+	u32 size = 256;
 	RandomCubes field(size*size, size, vec3(0));
 	///##################################
 	///##################################
@@ -197,7 +197,7 @@ void Novo::onKey(i32 key, i32 scancode, i32 action, i32 mod) {
 				case GLFW_KEY_TAB:
 					static int e;
 					if(++e > 5) e = 0;
-					glUniform1i(glGetUniformLocation(screen->getProgram(), "effectFlag"), e);
+					screen->getProgram().setUniform("effectFlag", e);
 					break;
 
 			}

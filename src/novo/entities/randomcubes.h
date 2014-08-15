@@ -14,7 +14,7 @@ class RandomCubes : public Entity, public Drawable
 	Buffer cbo;
 public:
 	RandomCubes(uint amount, i32 range, vec3 basePosition, vec3 scale = vec3(1));
-	~RandomCubes();
+
 	void draw(mat4 *transform);
 };
 

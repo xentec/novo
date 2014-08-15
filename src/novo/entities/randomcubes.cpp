@@ -1,5 +1,7 @@
 #include "randomcubes.h"
 
+#include <novo/util.h>
+
 #include <novo/gfx/rendering/cuboid.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -31,44 +33,25 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	cmd.count = 36;
 	cmd.instanceCount = amount;
 
-	size_t vxSize = Cuboid::vertices.size() * sizeof(Cuboid::vertices[0]);
-	size_t posSize = positions.size() * sizeof(positions[0]);
-	size_t colSize = colors.size() * sizeof(colors[0]);
-
-	vbo.allocate(vxSize + posSize + colSize);
-	vbo.addSubElements(Cuboid::vertices);
-	vbo.addSubElements(positions);
-	vbo.addSubElements(colors);
-
-	ibo.setElements(Cuboid::indices);
-
-	cbo.setData(cmd);
-
-	vao.bind();
-
 	prog.setLabel("RandomCubes");
 	prog.attach(Shader::load(ShaderType::Vertex, "cubes.v.glsl"));
 	prog.attach(Shader::load(ShaderType::Fragment, "cubes.f.glsl"));
-	prog.setFragDataLocation(0, "color");
 	prog.use();
 
-	GLint atribBasePos = glGetAttribLocation(prog, "basePos");
-	glVertexAttribPointer(atribBasePos, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glEnableVertexAttribArray(atribBasePos);
+	prog.bindFragDataLocation(0, "color");
 
-	GLint atribCubePos = glGetAttribLocation(prog, "cubePos");
-	glVertexAttribPointer(atribCubePos, 4, GL_FLOAT, GL_FALSE, 0, (void*) vxSize);
-	glEnableVertexAttribArray(atribCubePos);
-	glVertexAttribDivisor(atribCubePos, 1);
+	vbo.allocateElements(Cuboid::vertices, positions, colors);
 
-	GLint atribCubeColor = glGetAttribLocation(prog, "cubeColor");
-	glVertexAttribPointer(atribCubeColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (void*) (vxSize + posSize));
-	glEnableVertexAttribArray(atribCubeColor);
-	glVertexAttribDivisor(atribCubeColor, 1);
-}
+	vao.addAttribute(vbo, Cuboid::vertices, prog.getAttribute("basePos"), 4, DataType::Float);
+	vao.addAttribute(vbo, positions, prog.getAttribute("cubePos"), positions[0].length(), DataType::Float);
+	vao.addAttribute(vbo, colors, prog.getAttribute("cubeColor"), colors[0].length(), DataType::UByte, 0, true);
 
-RandomCubes::~RandomCubes()
-{
+	ibo.setElements(Cuboid::indices);
+	cbo.setData(cmd);
+
+
+	glVertexAttribDivisor(prog.getAttribute("cubePos"), 1);
+	glVertexAttribDivisor(prog.getAttribute("cubeColor"), 1);
 }
 
 void RandomCubes::draw(mat4 *transform)
