@@ -1,15 +1,15 @@
 #include "cube.h"
 
 #include <novo/gfx/rendering/cuboid.h>
-#include <novo/gfx/gl/obj.h>
 
 using namespace novo::graphics;
 
 Cube::Cube(vec3 position, float size):
-	Entity(position), Drawable()
+	Entity(position), Drawable(),
+	cbo(Buffer(BufferType::DrawCommand, BufferUsage::StaticDraw))
 {
 
-	util::createBuffers({&cbo});
+//	util::createBuffers({&cbo});
 /*	DrawElementsIndrectCommand cmd = {0,0,0,0,0};
 	cmd.count = 36;
 	cmd.instanceCount = amount;
@@ -47,7 +47,7 @@ Cube::Cube(vec3 position, float size):
 
 Cube::~Cube()
 {
-	util::destroyBuffers({cbo});
+//	util::destroyBuffers({cbo});
 }
 
 

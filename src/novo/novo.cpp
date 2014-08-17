@@ -9,6 +9,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
+#include <glbinding/Binding.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -28,7 +30,7 @@ using boost::program_options::variables_map;
 using boost::format;
 
 static void glfwErrorCB(int code, const char* msg);
-static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid *userParam);
+static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
 format fmtTitle(APPNAME" - FPS: %d ::S: %d");
 
@@ -47,15 +49,7 @@ Novo::Novo(variables_map opts):
 	test.open();
 	test.bindContext();
 
-	::glewExperimental = true;
-	GLenum stat = glewInit();
-	test.close();
-
-	if(stat) {
-		glfwTerminate();
-		throw std::runtime_error(string("GLEW init falied: ") +
-								 string(reinterpret_cast<const char*>(glewGetErrorString(stat))));
-	}
+	glbinding::Binding::initialize(false);
 
 	window->config.resizable = false;
 	window->config.GLversion.major = 3;
@@ -71,6 +65,7 @@ Novo::~Novo()
 }
 
 i32 Novo::run() {
+	using namespace ::gl;
 
 	window->open();
 	window->bindContext();
@@ -82,12 +77,11 @@ i32 Novo::run() {
 
 	///##################################
 	///##################################
-	u32 size = 512;
-	RandomCubes field(size*size, size, vec3(0));
-
 	sptr<Camera> cam(new Camera(vec3(0), 800, 600));
 	screen = sptr<Framebuffer>(new Framebuffer(800, 600, cam, false));
 
+	u32 size = 256;
+	RandomCubes field(size*size, size, vec3(0));
 	///##################################
 	///##################################
 
@@ -203,7 +197,7 @@ void Novo::onKey(i32 key, i32 scancode, i32 action, i32 mod) {
 				case GLFW_KEY_TAB:
 					static int e;
 					if(++e > 5) e = 0;
-					glUniform1i(glGetUniformLocation(screen->getProgram(), "effectFlag"), e);
+					screen->getProgram().setUniform("effectFlag", e);
 					break;
 
 			}
@@ -241,12 +235,12 @@ static void glfwErrorCB(int code, const char* msg)
 	std::cerr.flush();
 }
 
-static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid *userParam)
+static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam)
 {
 	using std::cerr;
 	using std::endl;
 
-	using namespace gl::names;
+	using namespace novo::gl::names;
 
 	static format err("[%f] glError: %d::%s::%s::%s\n\t%s\n");
 
@@ -258,8 +252,5 @@ static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GL
 	cerr.flush();
 	*/
 	if(severity == GL_DEBUG_SEVERITY_HIGH)
-		//(reinterpret_cast<Novo*>(userParam))->getMainWindow()->close();
 		throw novo::NovoException("OpenGL critical error");
 }
-
-
