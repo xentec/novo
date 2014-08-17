@@ -11,10 +11,10 @@ using novo::graphics::Drawable;
 
 class RandomCubes : public Entity, public Drawable
 {
-	GLuint cbo;
+	Buffer cbo;
 public:
 	RandomCubes(uint amount, i32 range, vec3 basePosition, vec3 scale = vec3(1));
-	~RandomCubes();
+
 	void draw(mat4 *transform);
 };
 
