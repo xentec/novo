@@ -86,7 +86,7 @@ i32 Novo::run() {
 
 	Origin origin(32.0);
 
-	u32 size = 256;
+	u32 size = 64;
 	RandomCubes field(size*size, size, vec3(0));
 	///##################################
 	///##################################
@@ -112,8 +112,7 @@ i32 Novo::run() {
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glBeginQuery(GL_SAMPLES_PASSED, query);
@@ -125,8 +124,6 @@ i32 Novo::run() {
 		glEndQuery(GL_SAMPLES_PASSED);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
 
 		screen->draw();
 
