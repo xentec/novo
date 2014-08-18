@@ -1,7 +1,10 @@
 #include "novo.h"
 
 #include <novo/io.h>
+
 #include <novo/entities/randomcubes.h>
+#include <novo/entities/origin.h>
+
 #include <novo/gfx/gl/names.h>
 #include <novo/gfx/framebuffer.h>
 #include <novo/gfx/window.h>
@@ -80,6 +83,9 @@ i32 Novo::run() {
 	sptr<Camera> cam(new Camera(vec3(0), 800, 600));
 	screen = sptr<Framebuffer>(new Framebuffer(800, 600, cam, false));
 
+
+	Origin origin(32.0);
+
 	u32 size = 256;
 	RandomCubes field(size*size, size, vec3(0));
 	///##################################
@@ -113,7 +119,8 @@ i32 Novo::run() {
 		glBeginQuery(GL_SAMPLES_PASSED, query);
 
 		///TODO glm::mat4_cast(glm::angleAxis(glm::sin((float)glfwGetTime()), vec3(0.0f, 0.0f, 1.0f)));
-		screen->render(&field);
+		//screen->render(&field);
+		screen->render(&origin);
 
 		glEndQuery(GL_SAMPLES_PASSED);
 
