@@ -1,7 +1,7 @@
 #ifndef RANDOMCUBES_H
 #define RANDOMCUBES_H
 
-#include <novo/entities/entity.h>
+#include "entity.h"
 #include <novo/gfx/drawable.h>
 
 using namespace glm;

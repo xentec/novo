@@ -4,9 +4,6 @@
 
 #include <novo/gfx/rendering/cuboid.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include <vector>
 #include <random>
 
@@ -59,6 +56,6 @@ void RandomCubes::draw(mat4 *transform)
 	vao.bind();
 	ibo.bind();
 	cbo.bind();
-	glUniformMatrix4fv(glGetUniformLocation(prog, "model"), 1, GL_FALSE, glm::value_ptr(*transform * translate(scale(mat4(), vec3(2,2,2)), pos)));
+	prog.setUniform("model", *transform * translate(scale(mat4(), vec3(2,2,2)), pos));
 	glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_BYTE, nullptr);
 }
