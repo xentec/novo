@@ -21,7 +21,7 @@ static const std::vector<u8> indices = {
 };
 
 Origin::Origin(f32 length, f32 width):
-	Entity(vec3{0,0,0}), Drawable(),
+	Entity(vec3(0)), Drawable(),
 	length(length), width(width)
 {
 	prog.setLabel("Origin");
@@ -32,13 +32,10 @@ Origin::Origin(f32 length, f32 width):
 	prog.bindFragDataLocation(0, "color");
 
 	vbo.allocateElements(vertices, colors);
-
 	vao.addAttribute(vbo, vertices, prog.getAttribute("pos"), vertices[0].length(), DataType::Float);
 	vao.addAttribute(vbo, colors, prog.getAttribute("color"), colors[0].length(), DataType::Float);
 
 	ibo.setElements(indices);
-
-	//glVertexAttribDivisor(prog.getAttribute("color"), 1);
 }
 
 void Origin::draw(mat4 *transform)
@@ -47,7 +44,7 @@ void Origin::draw(mat4 *transform)
 	ibo.bind();
 	prog.setUniform("model", *transform * translate(scale(mat4(), vec3(length)), pos));
 	glLineWidth(width);
-	glDrawElementsIndirect(GL_LINES, GL_UNSIGNED_BYTE, nullptr);
+	glDrawElements(GL_LINES, 6, GL_UNSIGNED_BYTE, nullptr);
 	glLineWidth(1.0);
 }
 

@@ -56,6 +56,10 @@ void RandomCubes::draw(mat4 *transform)
 	vao.bind();
 	ibo.bind();
 	cbo.bind();
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	prog.setUniform("model", *transform * translate(scale(mat4(), vec3(2,2,2)), pos));
 	glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_BYTE, nullptr);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 }
