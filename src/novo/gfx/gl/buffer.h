@@ -30,7 +30,7 @@ namespace BufferUsage {
 	static const GLenum StreamCopy = GL_STREAM_COPY;
 }
 
-namespace BufferAccess {
+namespace BufferMapAccess {
 	static const auto Read = GL_MAP_READ_BIT;
 	static const auto Write = GL_MAP_WRITE_BIT;
 	static const auto Persistent = GL_MAP_PERSISTENT_BIT;
