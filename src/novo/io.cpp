@@ -6,14 +6,12 @@
 namespace novo {
 namespace io {
 
-using std::string;
-
 File::File(const string &path)
 {
 
 }
 
-std::vector<u8> File::getData(const std::string &path)
+std::vector<u8> File::getData(const string &path)
 {
 	return get<std::vector<u8>>(path);
 }

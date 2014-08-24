@@ -66,7 +66,7 @@ namespace dtl {
 template <GLenum N>
 struct TypeSize
 {
-	enum { size =
+	enum { value =
 		   (N == DataType::HalfFloat)	? sizeof(f32)/2 :
 		   (N == DataType::Float)		? sizeof(f32) :
 		   (N == DataType::Double)		? sizeof(f64) :

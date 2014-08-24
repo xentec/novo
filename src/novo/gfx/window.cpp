@@ -3,7 +3,6 @@
 #include <iostream>
 
 using namespace novo::graphics;
-using std::string;
 
 namespace dtl {
 #ifdef OS_LINUX
@@ -73,12 +72,12 @@ void Window::close()
 	}
 }
 
-std::string Window::getTitle() const
+string Window::getTitle() const
 {
 	return title;
 }
 
-void Window::setTitle(const std::string &newTitle)
+void Window::setTitle(const string &newTitle)
 {
 	title = newTitle;
 	if(isOpen())

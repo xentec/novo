@@ -10,7 +10,7 @@
 namespace gl {
 namespace names {
 
-static std::unordered_map<GLenum, std::string>
+static std::unordered_map<GLenum, string>
 debug {
 	// Source
 	{GL_DEBUG_SOURCE_API, "API"},

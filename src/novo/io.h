@@ -10,8 +10,6 @@
 namespace novo {
 namespace io {
 
-using std::string;
-
 class File {
 public:
 	File(const string& path);

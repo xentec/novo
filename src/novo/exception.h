@@ -8,9 +8,9 @@
 namespace novo {
 
 class NovoException : public std::exception {
-	std::string msg;
+	string msg;
 public:
-	NovoException(std::string reason):
+	NovoException(string reason):
 		std::exception(),
 		msg(reason)
 	{}
