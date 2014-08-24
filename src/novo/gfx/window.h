@@ -76,7 +76,7 @@ public:
 	void bindContext();
 	void present();
 
-	std::string getTitle() const;
+	string getTitle() const;
 	void setTitle(const string &newTitle);
 
 	void setCursorMode(CursorMode mode);
@@ -145,7 +145,7 @@ private:
 class WindowException : public NovoException {
 	const Window* win;
 public:
-	WindowException(const Window* window, std::string reason):
+	WindowException(const Window* window, string reason):
 		NovoException(reason),
 		win(window) {}
 	const Window* getWindow() const { return win; }
