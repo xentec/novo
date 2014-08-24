@@ -1,16 +1,15 @@
 #include "novo.h"
 
 #include <novo/io.h>
-
 #include <novo/entities/randomcubes.h>
 #include <novo/entities/origin.h>
-
 #include <novo/gfx/gl/names.h>
 #include <novo/gfx/framebuffer.h>
 #include <novo/gfx/window.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <boost/ptr_container/ptr_list.hpp>
 
 #include <glbinding/Binding.h>
 
@@ -31,6 +30,7 @@ using std::bind;
 
 using boost::program_options::variables_map;
 using boost::format;
+using boost::ptr_list;
 
 static void glfwErrorCB(int code, const char* msg);
 static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
@@ -83,11 +83,12 @@ i32 Novo::run() {
 	sptr<Camera> cam(new Camera(vec3(0), 800, 600));
 	screen = sptr<Framebuffer>(new Framebuffer(800, 600, cam, false));
 
-
-	Origin origin(32.0);
+	ptr_list<Drawable> objs;
 
 	u32 size = 64;
-	RandomCubes field(size*size, size, vec3(0));
+	objs.push_back(new RandomCubes(size*size, size*size, vec3(0)));
+	objs.push_back(new Origin(size, 8.0));
+
 	///##################################
 	///##################################
 
@@ -118,8 +119,9 @@ i32 Novo::run() {
 		glBeginQuery(GL_SAMPLES_PASSED, query);
 
 		///TODO glm::mat4_cast(glm::angleAxis(glm::sin((float)glfwGetTime()), vec3(0.0f, 0.0f, 1.0f)));
-		//screen->render(&field);
-		screen->render(&origin);
+
+		for(Drawable& obj : objs)
+			screen->render(&obj);
 
 		glEndQuery(GL_SAMPLES_PASSED);
 
