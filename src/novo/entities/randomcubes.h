@@ -12,8 +12,9 @@ using novo::graphics::Drawable;
 class RandomCubes : public Entity, public Drawable
 {
 	Buffer cbo;
+	vec3 scale;
 public:
-	RandomCubes(uint amount, i32 range, vec3 basePosition, vec3 scale = vec3(1));
+	RandomCubes(uint amount, i32 range, vec3 basePosition, vec3 scale = vec3(10));
 
 	void draw(mat4 *transform);
 };

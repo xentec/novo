@@ -11,7 +11,7 @@ typedef detail::tvec4<u8, highp>		ubvec4;
 
 RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	Entity(basePosition), Drawable(),
-	cbo(Buffer(BufferType::DrawCommand, BufferUsage::StaticDraw))
+	cbo(Buffer(BufferType::DrawCommand, BufferUsage::StaticDraw)), scale(scale)
 {
 	std::vector<vec4> positions(amount);
 	std::vector<ubvec4> colors(amount);
@@ -58,7 +58,7 @@ void RandomCubes::draw(mat4 *transform)
 	cbo.bind();
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	prog.setUniform("model", *transform * translate(scale(mat4(), vec3(2,2,2)), pos));
+	prog.setUniform("model", *transform * translate(glm::scale(mat4(), scale), pos));
 	glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_BYTE, nullptr);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
