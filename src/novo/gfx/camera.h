@@ -11,17 +11,14 @@
 using namespace glm;
 using novo::entities::Entity;
 
-class Camera : Entity
+class Camera : public Entity
 {
 	vec3 pos;
 	quat rot;
 
 	vec3 velocity;
 
-	vec3
-		forward = {1.0f,0.0f,0.0f},
-		up		= {0.0f,1.0f,0.0f},
-		right;
+	vec3 forward, up, right;
 
 	struct {
 		float width, height;
@@ -35,9 +32,6 @@ public:
 
 	mat4 getView() const;
 	mat4 getProjection() const;
-
-	vec3 getPosition() const;
-	void setPosition(vec3 new_pos);
 
 	float getFOV() const;
 	void setFOV(float new_fov);
