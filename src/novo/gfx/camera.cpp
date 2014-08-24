@@ -9,8 +9,8 @@
 
 Camera::Camera(vec3 position, float width, float height, float fov, float near, float far):
 	Entity(position),
-	rot(quat()),
-	velocity(0),
+	rot(quat()), velocity(0),
+	forward{1.0f,0.0f,0.0f}, up{0.0f,1.0f,0.0f},
 	persp{width,height,fov,near,far}
 {
 	right = glm::normalize(glm::cross(forward, up));
