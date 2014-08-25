@@ -30,7 +30,7 @@ namespace BufferUsage {
 	static const GLenum StreamCopy = GL_STREAM_COPY;
 }
 
-namespace BufferMapAccess {
+namespace BufferMapRangeAccess {
 	static const auto Read = GL_MAP_READ_BIT;
 	static const auto Write = GL_MAP_WRITE_BIT;
 	static const auto Persistent = GL_MAP_PERSISTENT_BIT;
@@ -45,7 +45,6 @@ class Buffer : public Bindable
 {
 public:
 	Buffer(GLenum type, GLenum usage);
-	~Buffer();
 
 	GLenum getUsage() const;
 	void setUsage(GLenum value);
@@ -76,7 +75,8 @@ public:
 	void addSubElements(const Container& data) { addSubData(byteSize(data), &*(data.begin())); }
 
 	//TODO: MapBuffer
-	const void* map(GLenum bitfield);
+	const void* map(GLenum access);
+	const void* mapRange(u32 bytes_size, u32 offset, BufferAccessMask access);
 
 	u32 size() const;
 	u32 offset() const;

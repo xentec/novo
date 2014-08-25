@@ -9,11 +9,6 @@ Buffer::Buffer(GLenum type, GLenum usage):
 	usage(usage), bufSize(0), bufOffset(0)
 {}
 
-Buffer::~Buffer()
-{
-	glDeleteBuffers(1, &id);
-}
-
 GLenum Buffer::getUsage() const
 {
 	return usage;
@@ -53,6 +48,18 @@ void Buffer::addSubData(u32 bytes_size, const void* data)
 
 	setSubData(bufOffset, bytes_size, data);
 	bufOffset += bytes_size;
+}
+
+const void* Buffer::map(GLenum access)
+{
+	bind();
+	return glMapBuffer(type, access);
+}
+
+const void* Buffer::mapRange(u32 bytes_size, u32 offset, BufferAccessMask access)
+{
+	bind();
+	return glMapBufferRange(type, offset, bytes_size, access);
 }
 
 u32 Buffer::size() const {
