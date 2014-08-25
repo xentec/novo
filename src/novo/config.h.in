@@ -5,4 +5,7 @@
 
 #define DEBUG
 
+
+#define GLM_FORCE_RADIANS
+
 #endif // CONFIG_H
