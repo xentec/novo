@@ -6,11 +6,6 @@
 namespace novo {
 namespace io {
 
-File::File(const string &path)
-{
-
-}
-
 std::vector<u8> File::getData(const string &path)
 {
 	return get<std::vector<u8>>(path);
@@ -41,11 +36,3 @@ Result File::get(const string &path)
 }
 
 }}
-
-std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec) {
-	out << "{"
-		<< vec.x << " " << vec.y << " "<< vec.z
-		<< "}";
-
-	return out;
-}
