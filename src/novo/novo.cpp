@@ -33,7 +33,7 @@ using boost::format;
 using boost::ptr_list;
 
 static void glfwErrorCB(int code, const char* msg);
-static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
+static void glDebugCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
 format fmtTitle(APPNAME" - FPS: %d ::S: %d");
 
@@ -76,7 +76,7 @@ i32 Novo::run() {
 
 
 	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(&glErrorCB, this);
+	glDebugMessageCallback(&glDebugCB, this);
 
 	///##################################
 	///##################################
@@ -241,14 +241,14 @@ static void glfwErrorCB(int code, const char* msg)
 	std::cerr.flush();
 }
 
-static void glErrorCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam)
+static void glDebugCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam)
 {
 	using std::cerr;
 	using std::endl;
 
 	using namespace novo::gl::names;
 
-	static format err("[%f] glError: %d::%s::%s::%s\n\t%s\n");
+	static format err("[%f] gl: %d::%s::%s::%s\n\t%s\n");
 
 	cerr << (err % glfwGetTime() % id % debug[severity] % debug[source] % debug[type] % message);
 	cerr.flush();
