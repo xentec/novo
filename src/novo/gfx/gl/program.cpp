@@ -42,11 +42,11 @@ void Program::link()
 	linked = false;
 	glLinkProgram(id);
 
-	GLint status;
+	GLint status = 0;
 	glGetProgramiv(id, GL_LINK_STATUS, &status);
 
 	if(!status) {
-		GLint length;
+		GLint length = 0;
 		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &length);
 
 		string buffer(length, ' ');

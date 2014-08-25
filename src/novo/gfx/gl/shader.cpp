@@ -29,11 +29,11 @@ void Shader::compile(const string& glsl_source) {
 
 	compiled = false;
 	glCompileShader(id);
-	GLint status;
+	GLint status = 0;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &status);
 
 	if(!status) {
-		GLint length;
+		GLint length = 0;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 
 		string buffer(length, ' ');

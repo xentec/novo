@@ -100,7 +100,7 @@ i32 Novo::run() {
 	con.mouseBTN = window->onMouseButton.connect(bind(&Novo::onMouseButton, this, _1, _2, _3));
 
 	// Debug
-	GLuint query;
+	GLuint query = 0;
 	glGenQueries(1, &query);
 
 	steady_clock::time_point tick = steady_clock::now();
