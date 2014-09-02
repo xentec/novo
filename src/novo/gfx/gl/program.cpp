@@ -2,10 +2,16 @@
 
 using namespace novo::gl;
 
-Program::Program():
-	Object(glCreateProgram(), glDeleteProgram), linked(false)
-{
-}
+
+static std::unordered_map<GLenum, string> shaderNames {
+	{GL_VERTEX_SHADER, "vert"},
+	{GL_FRAGMENT_SHADER, "frag"},
+	{GL_GEOMETRY_SHADER, "geom"},
+};
+
+Program::Program(const string& label):
+	Object(glCreateProgram(), glDeleteProgram, label), linked(false)
+{}
 
 Program::Program(Shader& vertex, Shader& fragment, bool link_now):
 	Program()
@@ -18,6 +24,10 @@ Program::Program(Shader& vertex, Shader& fragment, bool link_now):
 
 void Program::attach(Shader shader)
 {
+	if(shader.getLabel().empty()) {
+		shader.setLabel(getLabel()+string(".")+shaderNames[shader.getType()]);
+	}
+
 	if(!shader.isCompiled())
 		shader.compile();
 
@@ -127,4 +137,3 @@ void Program::setUniform(Uniform location, GLsizei count, const dmat3x4& value, 
 
 void Program::setUniform(Uniform location, GLsizei count, const mat4x3& value, bool transpose) { glProgramUniformMatrix4x3fv(id, location, count, static_cast<GLboolean>(transpose), value_ptr(value)); }
 void Program::setUniform(Uniform location, GLsizei count, const dmat4x3& value, bool transpose) { glProgramUniformMatrix4x3dv(id, location, count, static_cast<GLboolean>(transpose), value_ptr(value)); }
-

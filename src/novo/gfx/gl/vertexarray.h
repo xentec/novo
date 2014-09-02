@@ -11,7 +11,7 @@ namespace gl {
 class VertexArray : public Bindable
 {
 public:
-	VertexArray();
+	VertexArray(const string& label = "");
 
 	void bindAttribute(const Buffer& vbo, Attribute attrib, GLuint component_count, GLenum data_type, GLuint stride = 0, GLuint offset = 0, bool normalize = false);
 	void unbind(Attribute attrib);

@@ -48,9 +48,10 @@ protected:
 	typedef std::function<void(GLuint)> DelFunc;
 	typedef std::function<void(const GLuint*)> DelFuncP;
 
-	Object(GLuint gl_id, DelFunc func);
-	Object(GLuint gl_id, DelFuncP func);
+	Object(GLuint gl_id, DelFunc func, const string& label = "");
+	Object(GLuint gl_id, DelFuncP func, const string& label = "");
 	Object(const Object& other);
+	Object(Object&& other) = delete;
 	virtual ~Object();
 
 	const GLuint id;

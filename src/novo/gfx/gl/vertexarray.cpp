@@ -2,10 +2,10 @@
 
 using namespace novo::gl;
 
-VertexArray::VertexArray():
+VertexArray::VertexArray(const string& label):
 	Bindable(glGenVertexArrays,
 			 glDeleteVertexArrays,
-			 glBindVertexArray)
+			 glBindVertexArray, label)
 {
 }
 

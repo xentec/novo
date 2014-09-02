@@ -20,7 +20,7 @@ typedef GLint Uniform;
 class Program : public Object
 {
 public:
-	Program();
+	Program(const string& label = "");
 	Program(Shader& vertex, Shader& fragment, bool link_now = true);
 
 	void attach(Shader shader);
