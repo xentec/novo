@@ -8,7 +8,10 @@
 #include <cstdint>
 
 #ifdef DEBUG
-    #include<iostream>
+	#include<iostream>
+	#define DBG(x)	std::cout << "D: " << x << std::endl;
+#else
+	#define DBG(x)
 #endif
 
 // chars
