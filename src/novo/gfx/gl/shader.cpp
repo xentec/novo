@@ -7,8 +7,12 @@
 using namespace novo::gl;
 using novo::io::File;
 
-Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now):
-	Object(glCreateShader(shader_type), glDeleteShader),
+Shader::Shader(GLenum shader_type, const string& label):
+	Shader(shader_type, "", false, label)
+{}
+
+Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now, const string& label):
+	Object(glCreateShader(shader_type), glDeleteShader, label),
 	type(shader_type), source(glsl_source), compiled(false)
 {
 	if(source.size() && compile_now)
@@ -49,12 +53,12 @@ bool Shader::isCompiled() const
 	return compiled;
 }
 
-Shader Shader::load(GLenum shader_type, const string& path, bool compile_now)
+Shader Shader::load(GLenum shader_type, const string& path, bool compile_now, const std::string& label)
 {
 	// TODO: Ressource management
 	static const string prefix = "res/shaders/";
 
-	return Shader(shader_type, File::getText(prefix + path), compile_now);
+	return Shader(shader_type, File::getText(prefix + path), compile_now, label);
 }
 
 

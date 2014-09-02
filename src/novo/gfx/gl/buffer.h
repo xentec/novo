@@ -44,7 +44,8 @@ namespace BufferMapRangeAccess {
 class Buffer : public Bindable
 {
 public:
-	Buffer(GLenum type, GLenum usage);
+	//TODO: move usage
+	Buffer(GLenum type, GLenum usage, const string& label = "");
 
 	GLenum getUsage() const;
 	void setUsage(GLenum value);
