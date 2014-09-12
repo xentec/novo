@@ -6,7 +6,7 @@ using namespace novo::graphics;
 
 Cube::Cube(vec3 position, float size):
 	Entity(position), Drawable(),
-	cbo(Buffer(BufferType::DrawCommand, BufferUsage::StaticDraw))
+	cbo(Buffer(BufferType::DrawCommand))
 {
 
 //	util::createBuffers({&cbo});

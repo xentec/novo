@@ -21,8 +21,8 @@ protected:
 	Program prog;
 public:
 	Drawable():
-		vbo(Buffer(BufferType::Vertex, BufferUsage::StaticDraw)),
-		ibo(Buffer(BufferType::Index,  BufferUsage::StaticDraw)),
+		vbo(Buffer(BufferType::Vertex)),
+		ibo(Buffer(BufferType::Index)),
 		prog(Program())
 	{}
 

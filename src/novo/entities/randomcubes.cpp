@@ -11,7 +11,7 @@ typedef detail::tvec4<u8, highp>		ubvec4;
 
 RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	Entity(basePosition), Drawable(),
-	cbo(Buffer(BufferType::DrawCommand, BufferUsage::StaticDraw)), scale(scale)
+	cbo(Buffer(BufferType::DrawCommand)), scale(scale)
 {
 	std::vector<vec4> positions(amount);
 	std::vector<ubvec4> colors(amount);
@@ -37,14 +37,14 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 
 	prog.bindFragDataLocation(0, "color");
 
-	vbo.allocateElements(Cuboid::vertices, positions, colors);
+	vbo.allocateElements(BufferUsage::StaticDraw, Cuboid::vertices, positions, colors);
 
 	vao.addAttribute(vbo, Cuboid::vertices, prog.getAttribute("basePos"), 4, DataType::Float);
 	vao.addAttribute(vbo, positions, prog.getAttribute("cubePos"), positions[0].length(), DataType::Float);
 	vao.addAttribute(vbo, colors, prog.getAttribute("cubeColor"), colors[0].length(), DataType::UByte, 0, true);
 
-	ibo.setElements(Cuboid::indices);
-	cbo.setData(cmd);
+	ibo.setElements(BufferUsage::StaticDraw, Cuboid::indices);
+	cbo.setData(BufferUsage::StaticDraw, cmd);
 
 
 	glVertexAttribDivisor(prog.getAttribute("cubePos"), 1);
