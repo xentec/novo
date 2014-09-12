@@ -8,7 +8,7 @@
 namespace novo {
 namespace gl {
 
-class VertexArray : public Bindable
+class VertexArray : public Bindable<GL_VERTEX_ARRAY, glGenVertexArrays, glDeleteVertexArrays, dtl::bindFunc<glBindVertexArray> >
 {
 public:
 	VertexArray(const string& label = "");

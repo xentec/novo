@@ -1,14 +1,16 @@
 #ifndef NAMES_H
 #define NAMES_H
 
-#include "object.h"
-
 #include <novo/global.h>
 
+#include <glbinding/gl/enum.h>
 #include <unordered_map>
 
+namespace novo {
 namespace gl {
 namespace names {
+
+using namespace ::gl;
 
 static std::unordered_map<GLenum, string>
 debug {
@@ -47,6 +49,6 @@ buffer {
 	{GL_TRANSFORM_FEEDBACK_BUFFER, "tranform feedback buffer"}
 };
 
-}}
+}}}
 
 #endif // NAMES_H

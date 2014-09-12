@@ -17,7 +17,7 @@ using namespace glm;
 typedef GLint Attribute;
 typedef GLint Uniform;
 
-class Program : public Object
+class Program : public Object<GL_PROGRAM, glDeleteProgram>
 {
 public:
 	Program(const string& label = "");

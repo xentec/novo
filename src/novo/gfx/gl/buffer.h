@@ -41,7 +41,7 @@ namespace BufferMapRangeAccess {
 	static const auto InvalidateRange = GL_MAP_INVALIDATE_RANGE_BIT;
 }
 
-class Buffer : public Bindable
+class Buffer : public Bindable<GL_BUFFER, glGenBuffers, glDeleteBuffers, glBindBuffer>
 {
 public:
 	//TODO: move usage

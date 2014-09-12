@@ -5,7 +5,7 @@
 using namespace novo::gl;
 
 Buffer::Buffer(GLenum type, GLenum usage, const string& label):
-	Bindable(glGenBuffers, glDeleteBuffers, glBindBuffer, type, label),
+	Bindable<GL_BUFFER, glGenBuffers, glDeleteBuffers, glBindBuffer>(type, label),
 	usage(usage), bufSize(0), bufOffset(0)
 {}
 

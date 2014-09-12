@@ -12,7 +12,7 @@ namespace ShaderType {
 	static const GLenum Geometry = GL_GEOMETRY_SHADER;
 }
 
-class Shader : public Object
+class Shader : public Object<GL_SHADER, glDeleteShader>
 {
 public:
 	Shader(GLenum shader_type, const string& label = "");

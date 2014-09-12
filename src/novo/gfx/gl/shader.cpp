@@ -7,12 +7,8 @@
 using namespace novo::gl;
 using novo::io::File;
 
-Shader::Shader(GLenum shader_type, const string& label):
-	Shader(shader_type, "", false, label)
-{}
-
 Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now, const string& label):
-	Object(glCreateShader(shader_type), glDeleteShader, label),
+	Object(glCreateShader(shader_type), label),
 	type(shader_type), source(glsl_source), compiled(false)
 {
 	if(source.size() && compile_now)

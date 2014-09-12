@@ -8,24 +8,54 @@
 namespace novo {
 namespace gl {
 
-class Bindable : public Object {
+using glGenFuncN = void (*)(GLsizei, GLuint*);
+using glDelFuncN = void (*)(GLsizei, const GLuint*);
+using glBindFunc = void (*)(GLenum, GLuint);
+using glBindFuncS = void (*)(GLuint);
+
+namespace dtl {
+	inline GLuint glGen(glGenFuncN glGen)
+	{
+		GLuint id = 0;
+		glGen(1, &id);
+		return id;
+	}
+
+	template<glDelFuncN F>
+	inline void delFunc(GLuint id) { F(1, &id); }
+
+	template<glBindFuncS bind>
+	inline void bindFunc(GLenum, GLuint id) { bind(id); }
+}
+
+template<GLenum TYPE, glGenFuncN GEN, glDelFuncN DEL, glBindFunc BIND>
+class Bindable : public Object<TYPE, dtl::delFunc<DEL> >
+{
+	typedef Object<TYPE, dtl::delFunc<DEL> > Base;
 public:
-	const std::function<void()> bind;
+	void bind() const {
+		if(binds[type] == Base::id)
+			return;
+		BIND(type, Base::id);
+		binds[type] = Base::id;
+	}
 
-	GLenum getType() const;
+	GLenum getType() const { return type; }
+
 protected:
-	typedef void(*GenFuncN)(GLsizei, GLuint*);
-	typedef void(*DelFuncN)(GLsizei, const GLuint*);
-	typedef void(*BindFunc)(GLenum, GLuint);
-	typedef void(*BindFuncS)(GLuint);
+	Bindable(GLenum type, const string& label = ""):
+		Base(dtl::glGen(GEN), label),
+		type(type)
+	{}
 
-	Bindable(GenFuncN gen, DelFuncN del, BindFunc bind, GLenum sub_type, const string& label = "");
-	Bindable(GenFuncN gen, DelFuncN del, BindFuncS bind, const string& label = "");
+	const GLenum type;
 
-	static GLuint glGen(Bindable::GenFuncN glGen);
-
-	GLenum type;
+private:
+	static std::unordered_map<GLenum, GLuint> binds;
 };
+
+template<GLenum TYPE, glGenFuncN GEN, glDelFuncN DEL, glBindFunc BIND>
+std::unordered_map<GLenum, GLuint> Bindable<TYPE, GEN, DEL, BIND>::binds;
 
 }}
 #endif // BINDABLE_H
