@@ -3,13 +3,27 @@
 
 #include <novo/global.h>
 
+#include <boost/format.hpp>
+
 #include <glbinding/gl/gl.h>
+#include <glbinding/Meta.h>
 
 #include <functional>
 #include <unordered_map>
 
 namespace novo {
 namespace gl {
+
+
+namespace dtl {
+#if DEBUG > 5
+	static boost::format dbg("%s[%d] '%s' %s (%d)");
+	#define DBG_GL(type,misc) DBG((dtl::dbg % glbinding::Meta::getString(type) % misc))
+#else
+	#define DBG_GL(type,misc)
+#endif
+}
+
 
 using namespace ::gl;
 
@@ -35,6 +49,9 @@ namespace DataType {
 	static const GLenum Double = GL_DOUBLE;
 }
 
+using glDelFunc = void (*)(GLuint);
+
+template<GLenum TYPE, glDelFunc DEL>
 class Object
 {
 public:
@@ -45,39 +62,38 @@ public:
 
 	operator GLuint() const { return id; }
 protected:
-	typedef std::function<void(GLuint)> DelFunc;
-	typedef std::function<void(const GLuint*)> DelFuncP;
+	Object(GLuint gl_id, const string& label = ""):
+		id(gl_id), label(label)
+	{
+		refs.emplace(id, 1);
+		DBG_GL(TYPE, id % label % "created" % refs[id]);
+	}
 
-	Object(GLuint gl_id, DelFunc func, const string& label = "");
-	Object(GLuint gl_id, DelFuncP func, const string& label = "");
-	Object(const Object& other);
-	Object(Object&& other) = delete;
-	virtual ~Object();
+	Object(const Object<TYPE, DEL>& other):
+		id(other.id), label(other.label)
+	{
+		refs[id]++;
+		DBG_GL(TYPE, id % label % "copied" % refs[id]);
+	}
+
+	virtual ~Object()
+	{
+		DBG_GL(TYPE, id % label % "dtored" % refs[id]);
+		if(--refs[id] == 0) {
+			DEL(id);
+			refs.erase(id);
+			DBG_GL(TYPE, id % label % "deleted" % refs[id]);
+		}
+	}
 
 	const GLuint id;
 private:
 	string label;
-	DelFunc glDel;
-
 	static std::unordered_map<GLuint, u32> refs;
 };
 
-namespace dtl {
-
-template <GLenum N>
-struct TypeSize
-{
-	enum { value =
-		   (N == DataType::HalfFloat)	? sizeof(f32)/2 :
-		   (N == DataType::Float)		? sizeof(f32) :
-		   (N == DataType::Double)		? sizeof(f64) :
-
-		   (N == DataType::Int  || N == DataType::UInt)		? sizeof(i32) :
-		   (N == DataType::Short|| N == DataType::UShort)	? sizeof(i16) : sizeof(i8)
-		 };
-};
-
-}
+template<GLenum TYPE, glDelFunc DEL>
+std::unordered_map<GLuint, u32> Object<TYPE, DEL>::refs;
 
 }}
 

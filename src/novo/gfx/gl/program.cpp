@@ -10,7 +10,8 @@ static std::unordered_map<GLenum, string> shaderNames {
 };
 
 Program::Program(const string& label):
-	Object(glCreateProgram(), glDeleteProgram, label), linked(false)
+	Object(glCreateProgram(), label),
+	linked(false)
 {}
 
 Program::Program(Shader& vertex, Shader& fragment, bool link_now):

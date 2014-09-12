@@ -3,9 +3,7 @@
 using namespace novo::gl;
 
 VertexArray::VertexArray(const string& label):
-	Bindable(glGenVertexArrays,
-			 glDeleteVertexArrays,
-			 glBindVertexArray, label)
+	Bindable(GL_VERTEX_ARRAY /* irrelevant */, label)
 {
 }
 
