@@ -28,7 +28,7 @@ Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_n
 	prog.use();
 
 	// Upload the vertices
-	vbo.allocateElements(fbVertices, fbTex);
+	vbo.allocateElements(BufferUsage::StaticDraw, fbVertices, fbTex);
 
 	vao.addAttribute(vbo, fbVertices, prog.getAttribute("pos"), 2, DataType::Float);
 	vao.addAttribute(vbo, fbTex, prog.getAttribute("tex"), 2, DataType::Float);

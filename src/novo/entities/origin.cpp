@@ -31,11 +31,11 @@ Origin::Origin(f32 length, f32 width):
 
 	prog.bindFragDataLocation(0, "color");
 
-	vbo.allocateElements(vertices, colors);
+	vbo.allocateElements(BufferUsage::StaticDraw, vertices, colors);
 	vao.addAttribute(vbo, vertices, prog.getAttribute("pos"), vertices[0].length(), DataType::Float);
 	vao.addAttribute(vbo, colors, prog.getAttribute("color"), colors[0].length(), DataType::Float);
 
-	ibo.setElements(indices);
+	ibo.setElements(BufferUsage::StaticDraw, indices);
 }
 
 void Origin::draw(mat4 *transform)

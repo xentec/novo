@@ -4,9 +4,9 @@
 
 using namespace novo::gl;
 
-Buffer::Buffer(GLenum type, GLenum usage, const string& label):
+Buffer::Buffer(GLenum type, const string& label):
 	Bindable<GL_BUFFER, glGenBuffers, glDeleteBuffers, glBindBuffer>(type, label),
-	usage(usage), bufSize(0), bufOffset(0)
+	usage(GL_BUFFER), bufSize(0), bufOffset(0)
 {}
 
 GLenum Buffer::getUsage() const
@@ -14,18 +14,16 @@ GLenum Buffer::getUsage() const
 	return usage;
 }
 
-void Buffer::setUsage(GLenum value)
+void Buffer::allocate(GLenum usage, u32 bytes_size)
 {
-	usage = value;
+	setData(usage, bytes_size, nullptr);
 }
 
-void Buffer::allocate(u32 bytes_size)
+void Buffer::setData(GLenum usage, u32 bytes_size, const void *data)
 {
-	setData(bytes_size, nullptr);
-}
+	if(usage == GL_BUFFER)
+		throw OpenGLException(this, "no buffer usage set");
 
-void Buffer::setData(u32 bytes_size, const void *data)
-{
 	bind();
 	glBufferData(type, bytes_size, data, usage);
 	bufSize = bytes_size;
