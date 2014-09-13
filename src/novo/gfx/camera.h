@@ -3,8 +3,6 @@
 
 #include <novo/entities/entity.h>
 
-
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -28,7 +26,7 @@ class Camera : public Entity
 
 	vec2 mousePos;
 public:
-	Camera(vec3 position, float width, float height, float fov = 90, float near = 1, float far = 1024);
+	Camera(vec3 position, float width, float height, float fov = 90, float near = 1, float far = -1);
 
 	mat4 getView() const;
 	mat4 getProjection() const;

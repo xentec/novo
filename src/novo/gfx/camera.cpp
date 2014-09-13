@@ -24,7 +24,10 @@ mat4 Camera::getView() const
 
 mat4 Camera::getProjection() const
 {
-	return glm::perspective(glm::radians(persp.fov), persp.width / persp.height, persp.near, persp.far);
+	if(persp.far > 0)
+		return glm::perspective(glm::radians(persp.fov), persp.width / persp.height, persp.near, persp.far);
+	else
+		return glm::infinitePerspective(glm::radians(persp.fov), persp.width / persp.height, persp.near);
 }
 
 
