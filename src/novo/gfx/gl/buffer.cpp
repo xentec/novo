@@ -27,6 +27,7 @@ void Buffer::setData(GLenum usage, u32 bytes_size, const void *data)
 	bind();
 	glBufferData(type, bytes_size, data, usage);
 	bufSize = bytes_size;
+	this->usage = usage;
 
 	if(data != nullptr)
 		bufOffset = bytes_size;

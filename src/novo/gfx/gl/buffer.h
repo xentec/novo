@@ -45,29 +45,29 @@ class Buffer : public Bindable<GL_BUFFER, glGenBuffers, glDeleteBuffers, glBindB
 {
 public:
 	//TODO: move usage
-	Buffer(GLenum type, GLenum usage, const string& label = "");
+	Buffer(GLenum type, const string& label = "");
 
 	GLenum getUsage() const;
 	void setUsage(GLenum value);
 
-	void allocate(u32 bytes_size);
+	void allocate(GLenum usage, u32 bytes_size);
 
 	// spec
-	void setData(u32 bytes_size, const void *data);
+	void setData(GLenum usage, u32 bytes_size, const void *data);
 	void setSubData(u32 bytes_offset, u32 bytes_size, const void *data);
 
 	void addSubData(u32 bytes_size, const void* data);
 
 	// single structs
 	template<typename T>
-	void setData(const T& data) { setData(byteSize(&data), &data); }
+	void setData(GLenum usage, const T& data) { setData(usage, byteSize(&data), &data); }
 
 	// for stl container
 	template<typename Container, typename... Args>
-	void allocateElements(const Container& ctr, const Args&... args) { allocate(byteSize(ctr), args...); }
+	void allocateElements(GLenum usage, const Container& ctr, const Args&... args) { allocate(usage, byteSize(ctr), args...); }
 
 	template<typename Container>
-	void setElements(const Container& data) { setData(byteSize(data), &*(data.begin())); }
+	void setElements(GLenum usage, const Container& data) { setData(usage, byteSize(data), &*(data.begin())); }
 
 	template<typename Container>
 	void setSubElements(u32 bytes_offset, const Container& data) { setSubData(bytes_offset, byteSize(data), &*(data.begin())); }
@@ -88,7 +88,7 @@ private:
 
 	// Madness
 	template<typename Container, typename... Args>
-	void allocate(u32 bytes_size, const Container& ctr, const Args&... args) { allocate(byteSize(ctr) + bytes_size, args...); }
+	void allocate(GLenum usage, u32 bytes_size, const Container& ctr, const Args&... args) { allocate(usage, byteSize(ctr) + bytes_size, args...); }
 };
 
 }}
