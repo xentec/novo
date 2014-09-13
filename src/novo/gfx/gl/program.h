@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <map>
+#include <unordered_map>
 
 namespace novo {
 namespace gl {
@@ -23,9 +23,11 @@ public:
 	Program(const string& label = "");
 	Program(Shader& vertex, Shader& fragment, bool link_now = true);
 
-	void attach(Shader shader);
+	Shader getShader(GLenum shader_type);
+
+	void attach(const Shader& shader);
 	void detach(const Shader& shader);
-	void detach(GLenum shader);
+	void detach(GLenum shader_type);
 	void link();
 	void use();
 
@@ -96,7 +98,7 @@ public:
 private:
 	bool linked;
 
-	std::map<GLenum, GLuint> shaders;
+	std::unordered_map<GLenum, Shader> shaders;
 };
 
 }}

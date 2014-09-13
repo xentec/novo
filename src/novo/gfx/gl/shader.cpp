@@ -56,7 +56,3 @@ Shader Shader::load(GLenum shader_type, const string& path, bool compile_now, co
 
 	return Shader(shader_type, File::getText(prefix + path), compile_now, label);
 }
-
-
-
-

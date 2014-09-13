@@ -9,6 +9,11 @@ static std::unordered_map<GLenum, string> shaderNames {
 	{GL_GEOMETRY_SHADER, "geom"},
 };
 
+static string shaderLabel(GLenum type, const string& prefix = "") {
+	return prefix+string(prefix.empty() ? "" : ".")+shaderNames[type];
+}
+
+
 Program::Program(const string& label):
 	Object(glCreateProgram(), label),
 	linked(false)
@@ -17,24 +22,31 @@ Program::Program(const string& label):
 Program::Program(Shader& vertex, Shader& fragment, bool link_now):
 	Program()
 {
-	attach(vertex);
-	attach(fragment);
+	shaders.emplace(ShaderType::Vertex, vertex);
+	shaders.emplace(ShaderType::Fragment, fragment);
+
 	if(link_now)
 		link();
 }
 
-void Program::attach(Shader shader)
+Shader Program::getShader(GLenum shader_type)
 {
-	if(shader.getLabel().empty()) {
-		shader.setLabel(getLabel()+string(".")+shaderNames[shader.getType()]);
+	return shaders.at(shader_type);
+}
+
+void Program::attach(const Shader& shader)
+{
+	Shader s = shader;
+	if(s.getLabel().empty()) {
+		s.setLabel(shaderLabel(shader.getType()));
 	}
 
-	if(!shader.isCompiled())
-		shader.compile();
+	if(!s.isCompiled())
+		s.compile();
 
-	glAttachShader(id, shader);
+	glAttachShader(id, s);
 
-	shaders.emplace(shader.getType(), shader);
+	shaders.emplace(s.getType(), s);
 }
 
 void Program::detach(const Shader& shader)
@@ -42,10 +54,10 @@ void Program::detach(const Shader& shader)
 	glDetachShader(id, shader);
 }
 
-void Program::detach(GLenum shader)
+void Program::detach(GLenum shader_type)
 {
-	glDetachShader(id, shaders[shader]);
-	shaders.erase(shader);
+	glDetachShader(id, shaders.at(shader_type));
+	shaders.erase(shader_type);
 }
 
 void Program::link()
