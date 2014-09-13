@@ -75,7 +75,7 @@ void Program::link()
 		string buffer(length, ' ');
 		glGetProgramInfoLog(id, length, nullptr, &buffer[0]);
 
-		throw std::runtime_error(string("Program ")+getLabel()+string(" failed to link!\n") + buffer);
+		throw OpenGLException(this, "failed to link");
 	}
 	linked = true;
 }
