@@ -17,13 +17,12 @@ static const std::array<f32, (2*3)*2> fbTex = {
 };
 
 Framebuffer::Framebuffer(i32 width, i32 height, sptr<Camera> camera, bool bind_now):
-	Drawable(), Renderer(),
+	Drawable("FB"), Renderer(),
 	cam(camera)
 {
 	// Program
-	prog.setLabel("FB");
-	prog.attach(Shader::load(ShaderType::Vertex, "screen.v.glsl"));
-	prog.attach(Shader::load(ShaderType::Fragment, "screen.f.glsl"));
+	prog.attach(Shader::load(ShaderType::Vertex, "screen.v.glsl", true, "FB.prog.vrtx"));
+	prog.attach(Shader::load(ShaderType::Fragment, "screen.f.glsl", true, "FB.prog.frag"));
 	prog.bindFragDataLocation(0, "color");
 	prog.use();
 

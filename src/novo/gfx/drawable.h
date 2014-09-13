@@ -20,10 +20,11 @@ protected:
 	Buffer vbo, ibo;
 	Program prog;
 public:
-	Drawable():
-		vbo(Buffer(BufferType::Vertex)),
-		ibo(Buffer(BufferType::Index)),
-		prog(Program())
+	Drawable(const string& name = ""):
+		vbo(Buffer(BufferType::Vertex, name+".vbo")),
+		ibo(Buffer(BufferType::Index,  name+".ibo")),
+		vao(VertexArray(name+".vao")),
+		prog(Program(name+".prog"))
 	{}
 
 	virtual void draw(mat4* transform) = 0;

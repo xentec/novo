@@ -10,8 +10,9 @@
 typedef detail::tvec4<u8, highp>		ubvec4;
 
 RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
-	Entity(basePosition), Drawable(),
-	cbo(Buffer(BufferType::DrawCommand)), scale(scale)
+	Entity(basePosition), Drawable("RandomCubes"),
+	cbo(Buffer(BufferType::DrawCommand, "RandomCubes.cbo")),
+	scale(scale)
 {
 	std::vector<vec4> positions(amount);
 	std::vector<ubvec4> colors(amount);
@@ -30,9 +31,8 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 	cmd.count = 36;
 	cmd.instanceCount = amount;
 
-	prog.setLabel("RandomCubes");
-	prog.attach(Shader::load(ShaderType::Vertex, "cubes.v.glsl"));
-	prog.attach(Shader::load(ShaderType::Fragment, "cubes.f.glsl"));
+	prog.attach(Shader::load(ShaderType::Vertex, "cubes.v.glsl", true, "RandomCubes.prog.vert"));
+	prog.attach(Shader::load(ShaderType::Fragment, "cubes.f.glsl", true, "RandomCubes.prog.frag"));
 	prog.use();
 
 	prog.bindFragDataLocation(0, "color");
@@ -49,6 +49,10 @@ RandomCubes::RandomCubes(u32 amount, i32 range, vec3 basePosition, vec3 scale):
 
 	glVertexAttribDivisor(prog.getAttribute("cubePos"), 1);
 	glVertexAttribDivisor(prog.getAttribute("cubeColor"), 1);
+
+	ibo.setElements(BufferUsage::StaticDraw, Cuboid::indices);
+	cbo.setData(BufferUsage::StaticDraw, cmd);
+	cbo.setLabel("RandomCubes.cbo");
 }
 
 void RandomCubes::draw(mat4 *transform)
