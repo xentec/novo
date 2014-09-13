@@ -3,8 +3,7 @@
 
 #define OS_@OS_NAME@
 
-#define DEBUG
-
+#define DEBUG 1
 
 #define GLM_FORCE_RADIANS
 

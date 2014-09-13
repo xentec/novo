@@ -39,7 +39,7 @@ void Shader::compile(const string& glsl_source) {
 		string buffer(length, ' ');
 		glGetShaderInfoLog(id, length, nullptr, &buffer[0]);
 
-		throw std::runtime_error(names::shader[type] + string(" failed!\n") + buffer);
+		throw OpenGLException(this, "failed to compile");
 	}
 	compiled = true;
 }
@@ -56,3 +56,4 @@ Shader Shader::load(GLenum shader_type, const string& path, bool compile_now, co
 
 	return Shader(shader_type, File::getText(prefix + path), compile_now, label);
 }
+

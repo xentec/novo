@@ -14,8 +14,13 @@ public:
 		std::exception(),
 		msg(reason)
 	{}
-	const char* what() const noexcept {
-		return msg.c_str();
+
+	const string getReason() const {
+		return msg;
+	}
+
+	virtual const char* what() const noexcept {
+		return typeid(this).name();
 	}
 };
 

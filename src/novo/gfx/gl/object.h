@@ -2,6 +2,7 @@
 #define OBJECT_H
 
 #include <novo/global.h>
+#include <novo/exception.h>
 
 #include <boost/format.hpp>
 
@@ -58,9 +59,12 @@ public:
 	string getLabel() const { return label; }
 	void setLabel(const string& new_label) { label = new_label; }
 
+	GLenum getGLType() const { return TYPE; }
+
 	u32 instances() const { return refs[id]; }
 
 	operator GLuint() const { return id; }
+
 protected:
 	Object(GLuint gl_id, const string& label = ""):
 		id(gl_id), label(label)
@@ -94,6 +98,24 @@ private:
 
 template<GLenum TYPE, glDelFunc DEL>
 std::unordered_map<GLuint, u32> Object<TYPE, DEL>::refs;
+
+class OpenGLException : NovoException
+{
+	boost::format dbg = boost::format("%s(%s): %s");
+
+	const string label;
+	const GLenum source;
+public:
+	template<GLenum T, glDelFunc F>
+	OpenGLException(Object<T,F>* obj, string reason):
+		NovoException((dbg % glbinding::Meta::getString(obj->getGLType()) % obj->getLabel() % reason).str()),
+		source(obj->getGLType()), label(obj->getLabel())
+	{}
+
+	const GLenum getSource() const { return source; }
+	const string getLabel() const { return label; }
+};
+
 
 }}
 
