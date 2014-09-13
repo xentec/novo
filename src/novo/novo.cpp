@@ -20,7 +20,8 @@
 #include <iostream>
 #include <thread>
 
-using namespace novo;
+namespace novo {
+
 using namespace graphics;
 
 using namespace std::chrono;
@@ -32,18 +33,18 @@ using boost::program_options::variables_map;
 using boost::format;
 using boost::ptr_list;
 
-static void glfwErrorCB(int code, const char* msg);
-static void glDebugCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
-
 format fmtTitle(APPNAME" - FPS: %d ::S: %d");
 
 Novo::Novo(variables_map opts):
-	window(new Window(800, 600, APPNAME))
+	window(new Window(800, 600, APPNAME)),
+	lastGLCalls(2),
+	noError(true)
 {
 	// GLFW
 	glfwSetErrorCallback(glfwErrorCB);
 	if(!glfwInit())
 		throw std::runtime_error(string("GLFW init failed!"));
+
 
 	// OpenGL / GLEW
 	Window test(1,1, APPNAME " - GL Test");
@@ -59,12 +60,41 @@ Novo::Novo(variables_map opts):
 	window->config.GLversion.minor = 2;
 	window->config.GLprofile = WindowConfig::Profile::CORE;
 	window->config.debuging = true;
+
+	using glbinding::CallbackMask;
+
+#if DEBUG > 2
+	lastGLCalls.set_capacity(2);
+	glbinding::setCallbackMask(CallbackMask::Before | CallbackMask::ParametersAndReturnValue);
+	glbinding::setBeforeCallback([&](const glbinding::FunctionCall& call)
+	{
+		std::stringstream cerr;
+		cerr << call.function.name() << "(";
+		for (unsigned i = 0; i < call.parameters.size(); ++i)
+		{
+			cerr << call.parameters[i]->asString();
+			if (i < call.parameters.size() - 1)
+				cerr << ", ";
+		}
+		cerr << ")";
+		if (call.returnValue)
+			cerr << " -> " << call.returnValue->asString();
+
+		cerr.flush();
+		lastGLCalls.push_back(cerr.str());
+	});
+#endif
 }
 
 Novo::~Novo()
 {
+	glbinding::setCallbackMask(glbinding::CallbackMask::None);
 	window->close();
 	glfwTerminate();
+}
+
+void Novo::stop() {
+	noError = false;
 }
 
 i32 Novo::run() {
@@ -77,6 +107,7 @@ i32 Novo::run() {
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(&glDebugCB, this);
+	debug::messageControl({debug::Source::API, debug::Type::Other, 131185, false});
 
 	///##################################
 	///##################################
@@ -105,12 +136,12 @@ i32 Novo::run() {
 
 	steady_clock::time_point tick = steady_clock::now();
 	i32 totalFrames = 0;
-	while(window->isOpen()) {
+	while(noError && window->isOpen()) {
 		///##################################
 
 		screen->getCamera()->moveUpdate(1);
 		screen->bind();
-		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -235,28 +266,45 @@ void Novo::onKey(i32 key, i32 scancode, i32 action, i32 mod) {
 }
 
 
-static void glfwErrorCB(int code, const char* msg)
+void Novo::glfwErrorCB(int code, const char* msg)
 {
-	std::cerr << string("[glfw]: ") << code << ": " << string(msg) << std::endl;
+	std::cerr << "[glfw]: " << code << ": " << msg << std::endl;
 	std::cerr.flush();
 }
 
-static void glDebugCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam)
+void Novo::glDebugCB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *userParam)
 {
-	using std::cerr;
+#define out std::cout
 	using std::endl;
-
 	using namespace novo::gl::names;
 
-	static format err("[%f] gl: %d::%s::%s::%s\n\t%s\n");
+	static format err("GL%s: %d::%s::%s::%s: %s\n");
 
-	cerr << (err % glfwGetTime() % id % debug[severity] % debug[source] % debug[type] % message);
-	cerr.flush();
+	string crit = severity == gl::debug::Severity::High ? ":!" : "";
+
+	out << (err % crit % id % debug[source] % debug[type] % debug[severity] % message);
+
+	if(severity == GL_DEBUG_SEVERITY_HIGH) {
+		const Novo* novo = reinterpret_cast<const Novo*>(userParam);
+		const_cast<Novo*>(novo)->stop(); // TODO: work around const violation
+#if DEBUG > 2
+		out << "{" << std::endl;
+		for(auto& call : novo->lastGLCalls) {
+			out << "\t" << call << std::endl;
+		}
+		out << "}" << std::endl;
+#endif
+	}
+
+
+	out.flush();
+#undef out
 	/*
 	cerr << "Stack trace:" << endl;
 	cerr << saneStackTrace() << endl;
 	cerr.flush();
 	*/
-	if(severity == GL_DEBUG_SEVERITY_HIGH)
-		throw novo::NovoException("OpenGL critical error");
+
+}
+
 }
