@@ -4,7 +4,7 @@
 
 using namespace novo::graphics;
 
-namespace dtl {
+namespace ext {
 #ifdef OS_LINUX
 	#define GLFW_EXPOSE_NATIVE_X11 1
 	#define GLFW_EXPOSE_NATIVE_GLX 1
@@ -13,7 +13,7 @@ namespace dtl {
 #endif
 }
 
-void setWindowHints(const WindowConfig &cfg);
+static void setWindowHints(const WindowConfig& cfg);
 static void setXClassHint(Window* window);
 
 Window::Window(i32 width, i32 height, const string &title, const WindowConfig &config)
@@ -163,7 +163,7 @@ void Window::mouseBtnCB(GLFWwindow* gw, int button, int action, int mod) {
 }
 
 
-void setWindowHints(const WindowConfig &cfg) {
+void setWindowHints(const WindowConfig& cfg) {
 	// Setting visual properties
 	glfwWindowHint(GLFW_VISIBLE, cfg.visible);
 	glfwWindowHint(GLFW_RESIZABLE, cfg.resizable);
@@ -190,11 +190,11 @@ void setWindowHints(const WindowConfig &cfg) {
 #ifdef OS_LINUX
 void setXClassHint(Window *window)
 {
-	dtl::XClassHint xch;
+	ext::XClassHint xch;
 	xch.res_name = const_cast<char*>("gl"); 	// aka instance
 	xch.res_class =	const_cast<char*>(window->getTitle().c_str());
 
-	dtl::XSetClassHint(dtl::glfwGetX11Display(), dtl::glfwGetX11Window(*window), &xch);
+	ext::XSetClassHint(ext::glfwGetX11Display(), ext::glfwGetX11Window(*window), &xch);
 
 }
 #endif
