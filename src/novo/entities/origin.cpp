@@ -21,12 +21,11 @@ static const std::vector<u8> indices = {
 };
 
 Origin::Origin(f32 length, f32 width):
-	Entity(vec3(0)), Drawable(),
+	Entity(vec3(0)), Drawable("Origin"),
 	length(length), width(width)
 {
-	prog.setLabel("Origin");
-	prog.attach(Shader::load(ShaderType::Vertex, "plain.v.glsl"));
-	prog.attach(Shader::load(ShaderType::Fragment, "plain.f.glsl"));
+	prog.attach(Shader::load(ShaderType::Vertex, "plain.v.glsl", true, "Origin.prog.vrtx"));
+	prog.attach(Shader::load(ShaderType::Fragment, "plain.f.glsl", true, "Origin.prog.vrtx"));
 	prog.use();
 
 	prog.bindFragDataLocation(0, "color");
