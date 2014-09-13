@@ -17,7 +17,7 @@ public:
 	Entity(vec3 position);
 
 	vec3 getPosition() const;
-	void setPosition(vec3 new_pos);
+	void setPosition(const vec3& new_pos);
 };
 
 }}
