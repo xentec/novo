@@ -1,96 +1,101 @@
-#ifndef BUFFER_H
-#define BUFFER_H
+#pragma once
 
 #include "bindable.h"
 
-#include <novo/util.h>
+#include "novo/util.h"
 
 namespace novo {
 namespace gl {
 
 namespace BufferType {
-	static const GLenum Vertex = GL_ARRAY_BUFFER;
-	static const GLenum Data = Vertex;
-	static const GLenum Index = GL_ELEMENT_ARRAY_BUFFER;
-	static const GLenum Uniform = GL_UNIFORM_BUFFER;
-	static const GLenum DrawCommand = GL_DRAW_INDIRECT_BUFFER;
-	static const GLenum Shader = GL_SHADER_STORAGE_BUFFER;
-	static const GLenum TransformFeedback = GL_TRANSFORM_FEEDBACK_BUFFER;
+	using glb::GLenum;
+	static const GLenum
+		Vertex            = GLenum::GL_ARRAY_BUFFER,
+		Data              = Vertex,
+		Element           = GLenum::GL_ELEMENT_ARRAY_BUFFER,
+		Index             = Element,
+		Uniform           = GLenum::GL_UNIFORM_BUFFER,
+		DrawCommand       = GLenum::GL_DRAW_INDIRECT_BUFFER,
+		Shader            = GLenum::GL_SHADER_STORAGE_BUFFER,
+		TransformFeedback = GLenum::GL_TRANSFORM_FEEDBACK_BUFFER;
 }
 
 namespace BufferUsage {
-	static const GLenum StaticDraw = GL_STATIC_DRAW;
-	static const GLenum StaticRead = GL_STATIC_READ;
-	static const GLenum StaticCopy = GL_STATIC_COPY;
-	static const GLenum DynamicDraw = GL_DYNAMIC_DRAW;
-	static const GLenum DynamicRead = GL_DYNAMIC_READ;
-	static const GLenum DynamicCopy = GL_DYNAMIC_COPY;
-	static const GLenum StreamDraw = GL_STREAM_DRAW;
-	static const GLenum StreamRead = GL_STREAM_READ;
-	static const GLenum StreamCopy = GL_STREAM_COPY;
+	using glb::GLenum;
+	static const GLenum
+		StaticDraw = GLenum::GL_STATIC_DRAW,
+		StaticRead = GLenum::GL_STATIC_READ,
+		StaticCopy = GLenum::GL_STATIC_COPY,
+		DynamicDraw = GLenum::GL_DYNAMIC_DRAW,
+		DynamicRead = GLenum::GL_DYNAMIC_READ,
+		DynamicCopy = GLenum::GL_DYNAMIC_COPY,
+		StreamDraw = GLenum::GL_STREAM_DRAW,
+		StreamRead = GLenum::GL_STREAM_READ,
+		StreamCopy = GLenum::GL_STREAM_COPY;
 }
-
 namespace BufferMapRangeAccess {
-	static const auto Read = GL_MAP_READ_BIT;
-	static const auto Write = GL_MAP_WRITE_BIT;
-	static const auto Persistent = GL_MAP_PERSISTENT_BIT;
-	static const auto Coherent = GL_MAP_COHERENT_BIT;
-	static const auto Unsychronized = GL_MAP_UNSYNCHRONIZED_BIT;
-	static const auto FlushExplicit = GL_MAP_FLUSH_EXPLICIT_BIT;
-	static const auto InvalidateBuffer = GL_MAP_INVALIDATE_BUFFER_BIT;
-	static const auto InvalidateRange = GL_MAP_INVALIDATE_RANGE_BIT;
+#define GL(d) glb::GL_MAP_##d##_BIT
+	static const auto
+		Read = GL(READ),
+		Write = GL(WRITE),
+		Persistent = GL(PERSISTENT),
+		Coherent = GL(COHERENT);
+	static const auto
+		Unsychronized = GL(UNSYNCHRONIZED),
+		FlushExplicit = GL(FLUSH_EXPLICIT),
+		InvalidateBuffer = GL(INVALIDATE_BUFFER),
+		InvalidateRange = GL(INVALIDATE_RANGE);
+#undef GL
 }
 
-class Buffer : public Bindable<GL_BUFFER, glGenBuffers, glDeleteBuffers, glBindBuffer>
+struct Buffer : Bindable<glb::GL_BUFFER, glb::glGenBuffers, glb::glDeleteBuffers, glb::glBindBuffer>
 {
-public:
-	//TODO: move usage
-	Buffer(GLenum type, const string& label = "");
+	using Usage = glb::GLenum;
+	using Type = glb::GLenum;
 
-	GLenum getUsage() const;
-	void setUsage(GLenum value);
+	Buffer(Type type, const string& label = "");
 
-	void allocate(GLenum usage, u32 bytes_size);
+	Usage getUsage() const;
+
+	void allocate(Usage usage, usz bytes_size);
 
 	// spec
-	void setData(GLenum usage, u32 bytes_size, const void *data);
-	void setSubData(u32 bytes_offset, u32 bytes_size, const void *data);
+	void setData(Usage buffer_usage, usz bytes_size, const void *data);
+	void setSubData(usz bytes_offset, usz bytes_size, const void *data);
 
-	void addSubData(u32 bytes_size, const void* data);
+	void addSubData(usz bytes_size, const void* data);
 
 	// single structs
-	template<typename T>
-	void setData(GLenum usage, const T& data) { setData(usage, byteSize(&data), &data); }
+	template<class T>
+	void setData(Usage usage, const T& data) { setData(usage, byteSize(&data), &data); }
 
 	// for stl container
-	template<typename Container, typename... Args>
-	void allocateElements(GLenum usage, const Container& ctr, const Args&... args) { allocate(usage, byteSize(ctr), args...); }
+	template<class Container, class... Args>
+	void allocateElements(Usage usage, const Container& data, const Args&... args) { allocate(usage, byteSize(data), args...); }
 
-	template<typename Container>
-	void setElements(GLenum usage, const Container& data) { setData(usage, byteSize(data), &*(data.begin())); }
+	template<class Container>
+	void setElements(Usage usage, const Container& data) { setData(usage, byteSize(data), &*(data.begin())); }
 
-	template<typename Container>
-	void setSubElements(u32 bytes_offset, const Container& data) { setSubData(bytes_offset, byteSize(data), &*(data.begin())); }
+	template<class Container>
+	void setSubElements(usz bytes_offset, const Container& data) { setSubData(bytes_offset, byteSize(data), &*(data.begin())); }
 
-	template<typename Container>
+	template<class Container>
 	void addSubElements(const Container& data) { addSubData(byteSize(data), &*(data.begin())); }
 
 	//TODO: MapBuffer
-	const void* map(GLenum access);
-	const void* mapRange(u32 bytes_size, u32 offset, BufferAccessMask access);
+	const void* map(glb::GLenum access);
+	const void* mapRange(usz bytes_size, usz offset, glb::BufferAccessMask access);
 
-	u32 size() const;
-	u32 offset() const;
+	usz size() const;
+	usz offset() const;
 private:
-	GLenum usage;
-	u32 bufSize;
-	u32 bufOffset;
+	Usage usage;
+	usz bufSize;
+	usz bufOffset;
 
 	// Madness
-	template<typename Container, typename... Args>
-	void allocate(GLenum usage, u32 bytes_size, const Container& ctr, const Args&... args) { allocate(usage, byteSize(ctr) + bytes_size, args...); }
+	template<class Container, class... Args>
+	void allocate(Usage usage, u32 bytes_size, const Container& ctr, const Args&... args) { allocate(usage, byteSize(ctr) + bytes_size, args...); }
 };
 
 }}
-
-#endif // BUFFER_H

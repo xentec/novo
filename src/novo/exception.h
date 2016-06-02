@@ -1,29 +1,23 @@
-#ifndef EXCEPTIONS_H
-#define EXCEPTIONS_H
+#pragma once
 
-#include <novo/global.h>
+#include "novo/global.h"
 
 #include <exception>
 
 namespace novo {
 
-class NovoException : public std::exception {
-	string msg;
+class Exception : public std::exception {
 public:
-	NovoException(string reason):
+	Exception(const string& reason = ""):
 		std::exception(),
-		msg(reason)
+		reason(reason)
 	{}
-
-	const string getReason() const {
-		return msg;
-	}
 
 	virtual const char* what() const noexcept {
 		return typeid(this).name();
 	}
+
+	const string reason;
 };
 
 }
-
-#endif // EXCEPTIONS_H

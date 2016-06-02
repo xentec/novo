@@ -1,34 +1,42 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include "object.h"
 
 namespace novo {
 namespace gl {
 
-namespace ShaderType {
-	static const GLenum Vertex = GL_VERTEX_SHADER;
-	static const GLenum Fragment = GL_FRAGMENT_SHADER;
-	static const GLenum Geometry = GL_GEOMETRY_SHADER;
-}
 
-class Shader : public Object<GL_SHADER, glDeleteShader>
+struct Shader : Object<glb::GL_SHADER, glb::glDeleteShader>
 {
-public:
-	Shader(GLenum shader_type, const string& glsl_source = "", bool compile_now = true, const string& label = "");
+	using Type = glb::GLenum;
 
-	GLenum getType() const;
+	Shader(Type shader_type, const string& source = "", const string& label = "");
 
-	void compile(const string& source = "");
+	Type getType() const;
+
+	void load(const string& source) const;
+	bool compile() const;
+
 	bool isCompiled() const;
+	string getInfoLog() const;
+	string getSource() const;
 
-	static Shader load(GLenum shader_type, const string& path, bool compile_now = true, const string& label = "");
+	static Shader fromID(u32 id);
 private:
-	GLenum type;
-	string source;
-	bool compiled;
+	Shader(u32 id, const string& label);
 };
 
-}}
+namespace ShaderType {
+#define GL(d) GLenum::GL_##d##_SHADER
+	using glb::GLenum;
+	static const Shader::Type
+		Vertex             = GL(VERTEX),
+		Fragment           = GL(FRAGMENT),
+		TesselationControl = GL(TESS_CONTROL),
+		TesselationEval    = GL(TESS_EVALUATION),
+		Geometry           = GL(GEOMETRY),
+		Compute            = GL(COMPUTE);
+#undef GL
+}
 
-#endif // SHADER_H
+}}

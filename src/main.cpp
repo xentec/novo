@@ -1,36 +1,36 @@
-#include <novo/novo.h>
 
-#include <boost/program_options.hpp>
+#include "novo/app.h"
+
+#include <cppformat/format.h>
+#include <cxxopts.hpp>
+
+#include <exception>
 #include <iostream>
+#include <iterator>
+#include <vector>
 
-namespace po = boost::program_options;
 
-int main(int argc, char* argv[]) {
+using fmt::print;
 
-	// Declare the supported options.
-	po::options_description desc("Options");
-	desc.add_options()
-		("help", "help message")
+int main(int argc, char* argv[])
+{
+	cxxopts::Options opts(argv[0], " - forever in development");
+	opts.add_options()
+		("s,size", "space size", cxxopts::value<u32>()->default_value("16"))
+		("h,help", "print help")
 	;
+	opts.parse(argc, argv);
 
-	po::variables_map opts;
-	po::store(po::parse_command_line(argc, argv, desc), opts);
-	po::notify(opts);
-
-	if (opts.count("help")) {
-		std::cout << desc << std::endl;
+	if(opts.count("help"))
+	{
+		fmt::print(opts.help());
 		return 0;
 	}
-
 	try {
-		return novo::Novo(opts).run();
-	} catch (const novo::NovoException& e) {
-		// TODO: better error codes
-		std::cerr << "Novo: " << e.getReason() << std::endl;
+		return novo::App(opts).run();
+	} catch (const novo::Exception& e) {
+		print(std::cerr, "Something went wrong!\n");
+		print(std::cerr, "Novo: {}\n", e.reason);
 		return 2;
-	} catch (const std::exception& e) {
-		std::cerr << "Fatal: " << e.what() << std::endl;
-		return 1;
 	}
 }
-

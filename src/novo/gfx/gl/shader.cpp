@@ -1,59 +1,85 @@
 #include "shader.h"
 
-#include "names.h"
-
-#include <novo/io.h>
-
 using namespace novo::gl;
-using novo::io::File;
+using namespace glb;
 
-Shader::Shader(GLenum shader_type, const string& glsl_source, bool compile_now, const string& label):
-	Object(glCreateShader(shader_type), label),
-	type(shader_type), source(glsl_source), compiled(false)
+Shader::Shader(Type shader_type, const string& source, const string& label):
+	Object(glCreateShader(shader_type), label)
 {
-	if(source.size() && compile_now)
-		compile(source);
+	if(source.length())
+		load(source);
 }
 
-GLenum Shader::getType() const
+Shader::Type Shader::getType() const
 {
-	return type;
+	GLint type = 0;
+	glGetShaderiv(id, GL_SHADER_TYPE, &type);
+	return static_cast<Type>(type);
 }
 
-void Shader::compile(const string& glsl_source) {
-	if(glsl_source.size())
-		source = glsl_source;
-
-	const GLchar* src = source.c_str();
+void Shader::load(const std::string& source) const
+{
+	const char* src = source.c_str();
 	glShaderSource(id, 1, &src, nullptr);
+}
 
-	compiled = false;
+bool Shader::compile() const
+{
 	glCompileShader(id);
-	GLint status = 0;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &status);
 
-	if(!status) {
-		GLint length = 0;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+	bool ok = isCompiled();
+	if(!ok)
+		throw OpenGLException(this, fmt::sprintf("failed to compile:\n%s", getInfoLog()));
 
-		string buffer(length, ' ');
-		glGetShaderInfoLog(id, length, nullptr, &buffer[0]);
-
-		throw OpenGLException(this, "failed to compile");
-	}
-	compiled = true;
+	return ok;
 }
 
 bool Shader::isCompiled() const
 {
-	return compiled;
+	GLint status = 0;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &status);
+	return status;
 }
 
-Shader Shader::load(GLenum shader_type, const string& path, bool compile_now, const std::string& label)
+string Shader::getInfoLog() const
 {
-	// TODO: Ressource management
-	static const string prefix = "res/shaders/";
+	GLint length = 0;
+	glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 
-	return Shader(shader_type, File::getText(prefix + path), compile_now, label);
+	length--;
+	string buffer(length, ' ');
+	glGetShaderInfoLog(id, length, nullptr, &buffer[0]);
+
+	return buffer;
 }
+
+string Shader::getSource() const
+{
+	GLint length = 0;
+	glGetShaderiv(id, GL_SHADER_SOURCE_LENGTH, &length);
+
+	length--;
+	string buffer(length, ' ');
+	glGetShaderSource(id, length, nullptr, &buffer[0]);
+
+	return buffer;
+}
+
+Shader Shader::fromID(u32 id)
+{
+	GLsizei length = 0;
+	GLchar buffer[128];
+	glGetObjectLabel(type, id, 128, &length, buffer);
+
+	string label;
+	if(length)
+		label.assign(buffer, buffer+length);
+
+	return Shader(id, label);
+}
+
+Shader::Shader(u32 id, const std::string& label):
+	Object(id, label, false)
+{}
+
 

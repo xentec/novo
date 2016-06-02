@@ -1,122 +1,26 @@
 #include "camera.h"
 
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/string_cast.hpp>
 
+using namespace novo::gfx;
+using namespace glm;
 
-#include <iostream>
+const Camera::WorldAxis Camera::world { {1,0,0}, {0,1,0}, {0,0,1} };
 
-Camera::Camera(vec3 position, float width, float height, float fov, float near, float far):
-	Entity(position),
-	rot(quat()), velocity(0),
-	forward{1.0f,0.0f,0.0f}, up{0.0f,1.0f,0.0f},
-	persp{width,height,fov,near,far}
+void Camera::spaceRotation(quat& rot, f32 pitch, f32 yaw, f32 roll)
 {
-	right = glm::normalize(glm::cross(forward, up));
+	rot *= angleAxis(radians(pitch), world.x);
+	rot *= angleAxis(radians(yaw),   world.y);
+	rot *= angleAxis(radians(roll),  world.z);
 }
 
-///TODO: Caching
-mat4 Camera::getView() const
+void Camera::fpsRotation(quat& rot, f32 pitch, f32 yaw, f32 roll)
 {
-	return glm::mat4_cast(glm::inverse(rot)) * glm::translate(mat4(), pos);
+	f64 p = glm::pitch(rot) + radians(pitch);
+	f64 y = glm::yaw(rot) + radians(yaw);
+//	DBG(1, "P:{:.2f} Y:{:.2f}", glm::degrees(p), glm::degrees(y));
+//	if(glm::abs(p) <= glm::half_pi<f64>())
+	rot *= angleAxis(radians(pitch), world.x);
+	rot =  angleAxis(radians(yaw),   world.y) * rot;
+	rot *= angleAxis(radians(roll),  world.z);
 }
-
-mat4 Camera::getProjection() const
-{
-	if(persp.far > 0)
-		return glm::perspective(glm::radians(persp.fov), persp.width / persp.height, persp.near, persp.far);
-	else
-		return glm::infinitePerspective(glm::radians(persp.fov), persp.width / persp.height, persp.near);
-}
-
-
-float Camera::getFOV() const
-{
-	return persp.fov;
-}
-
-void Camera::setFOV(float new_fov)
-{
-	persp.fov = new_fov;
-}
-
-float Camera::getNearPlane() const
-{
-	return persp.near;
-}
-
-void Camera::setNearPlane(float new_near)
-{
-	persp.near = new_near;
-}
-
-float Camera::getFarPlane() const
-{
-	return persp.far;
-}
-
-void Camera::setFarPlane(float new_far)
-{
-	persp.far = new_far;
-}
-
-void Camera::resize(float new_width, float new_height)
-{
-/*	if(persp.width == new_width &&
-	   persp.height == new_height)
-		return;
-*/
-	persp.width = new_width;
-	persp.height = new_height;
-}
-
-
-void Camera::moveRelative(vec3 rel_pos)
-{
-	pos += rel_pos;
-}
-
-void Camera::moveDirected(vec3 rel_pos)
-{
-	pos += rot * rel_pos;
-}
-
-void Camera::moveUpdate(float dt)
-{
-	moveDirected(velocity*dt);
-}
-
-vec3 Camera::getVelocity() const
-{
-	return velocity;
-}
-
-void Camera::setVelocity(vec3 vel)
-{
-	velocity = vel;
-}
-
-void Camera::pitch(float a)
-{
-	rot = rot * glm::angleAxis(glm::radians(a), forward);
-}
-
-void Camera::yaw(float a)
-{
-	rot = glm::angleAxis(glm::radians(a), up) * rot;
-}
-
-void Camera::roll(float a)
-{
-	rot = rot * glm::angleAxis(glm::radians(a), right);
-}
-
-void Camera::mouseCallback(double x, double y)
-{
-	yaw(mousePos.x - x);
-	pitch(mousePos.y - y);
-
-	mousePos = vec2(x,y);
-}
-

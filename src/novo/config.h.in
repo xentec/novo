@@ -1,10 +1,11 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 #define OS_@OS_NAME@
+#define DEBUG 4
 
-#define DEBUG 1
+#define GLFW_INCLUDE_NONE
 
-#define GLM_FORCE_RADIANS
-
-#endif // CONFIG_H
+#define NOVO_RESSOURCE_PATH "res/"
+#define NOVO_SHADER_PATH NOVO_RESSOURCE_PATH "shaders/"
+#define NOVO_TEXTURE_PATH NOVO_RESSOURCE_PATH "textures/"
+#define NOVO_GL_REFCOUNT 1

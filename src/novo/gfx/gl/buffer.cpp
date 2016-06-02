@@ -1,51 +1,56 @@
 #include "buffer.h"
 
-#include <novo/gfx/gl/names.h>
+#include "debug.h"
+#include "names.h"
 
 using namespace novo::gl;
+using namespace glb;
 
-Buffer::Buffer(GLenum type, const string& label):
+Buffer::Buffer(Type type, const string& label):
 	Bindable<GL_BUFFER, glGenBuffers, glDeleteBuffers, glBindBuffer>(type, label),
 	usage(GL_BUFFER), bufSize(0), bufOffset(0)
 {}
 
-GLenum Buffer::getUsage() const
+Buffer::Usage Buffer::getUsage() const
 {
 	return usage;
 }
 
-void Buffer::allocate(GLenum usage, u32 bytes_size)
+void Buffer::allocate(Usage usage, usz bytes_size)
 {
 	setData(usage, bytes_size, nullptr);
 }
 
-void Buffer::setData(GLenum usage, u32 bytes_size, const void *data)
+void Buffer::setData(Usage buffer_usage, usz bytes_size, const void *data)
 {
-	if(usage == GL_BUFFER)
-		throw OpenGLException(this, "no buffer usage set");
-
 	bind();
-	glBufferData(type, bytes_size, data, usage);
+	glBufferData(type, bytes_size, data, buffer_usage);
 	bufSize = bytes_size;
-	this->usage = usage;
+	usage = buffer_usage;
 
 	if(data != nullptr)
 		bufOffset = bytes_size;
 }
 
-
-void Buffer::setSubData(u32 bytes_offset, u32 bytes_size, const void *data)
+void Buffer::setSubData(usz bytes_offset, usz bytes_size, const void *data)
 {
 	bind();
 	glBufferSubData(type, bytes_offset, bytes_size, data);
+	bufOffset = bytes_offset + bytes_size;
 }
 
-void Buffer::addSubData(u32 bytes_size, const void* data)
+void Buffer::addSubData(usz bytes_size, const void* data)
 {
-	if(bufOffset + bytes_size > bufSize)
-		return; // TODO: Error
-
-	setSubData(bufOffset, bytes_size, data);
+/*
+	if(bufOffset + bytes_size > bufSize) {
+		//TODO: better error handling?
+		string msg = (dtl::excDbg % glbinding::Meta::getString(getGLType()) % getLabel() % "addSubData failed: offset > buffer size").str();
+		glDebugMessageInsert(debug::Source::Application, debug::Type::Error, 200001, debug::Severity::Medium, msg.size(), msg.c_str());
+		return;
+	}
+*/
+	bind();
+	glBufferSubData(type, bufOffset, bytes_size, data);
 	bufOffset += bytes_size;
 }
 
@@ -55,16 +60,16 @@ const void* Buffer::map(GLenum access)
 	return glMapBuffer(type, access);
 }
 
-const void* Buffer::mapRange(u32 bytes_size, u32 offset, BufferAccessMask access)
+const void* Buffer::mapRange(usz bytes_size, usz offset, BufferAccessMask access)
 {
 	bind();
 	return glMapBufferRange(type, offset, bytes_size, access);
 }
 
-u32 Buffer::size() const {
+usz Buffer::size() const {
 	return bufSize;
 }
 
-u32 Buffer::offset() const {
+usz Buffer::offset() const {
 	return bufOffset;
 }

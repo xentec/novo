@@ -1,20 +1,12 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#pragma once
 
 #include "config.h"
 
 #include <string>
 #include <memory>
-#include <cstdint>
+#include <cinttypes>
 
-#ifdef DEBUG
-	#include<iostream>
-	#define DBG(x)	std::cout << "D: " << x << std::endl;
-#else
-	#define DBG(x)
-#endif
-
-// chars
+// (more) chars
 typedef unsigned char	uchar;
 
 // integer
@@ -34,14 +26,50 @@ typedef uint64_t	u64;
 typedef float		f32;
 typedef double		f64;
 
-//
-template<typename T>
-using sptr = std::shared_ptr<T>;
-template<typename T>
-using uptr = std::unique_ptr<T>;
-template<typename T>
-using wptr = std::weak_ptr<T>;
+// pointer size dependent
+typedef std::ptrdiff_t  isz;
+typedef std::size_t     usz;
 
+
+// pointer wrapper
+template<class T>
+using ptrS = std::shared_ptr<T>;
+template<class T>
+using ptrU = std::unique_ptr<T>;
+template<class T>
+using ptrW = std::weak_ptr<T>;
+
+// always needed
 using std::string;
 
-#endif // GLOBAL_H
+
+#ifdef DEBUG
+	#include <fmt/format.h>
+
+	template<class... Args>
+	inline void _dbg(fmt::CStringRef format, const Args& ... args)
+	{
+		fmt::print(format, args...);
+		fmt::print("\n");
+	}
+
+	template<class... Args>
+	inline void _dbg(i8 lvl, fmt::CStringRef format, const Args& ... args)
+	{
+		if(lvl <= DEBUG)
+			_dbg(format, args...);
+	}
+
+	template<class... Args> // cond is u8 because bool is 'ambiguous'
+	inline void _dbg(i8 lvl, u8 cond, fmt::CStringRef format, const Args& ... args)
+	{
+		if(cond)
+			_dbg(lvl, format, args...);
+	}
+
+	#define DBG(...) _dbg(__VA_ARGS__);
+	#define DBG_(...) _dbg_(__VA_ARGS__)
+#else
+	#define DBG(...)
+	#define DBG_(...)
+#endif

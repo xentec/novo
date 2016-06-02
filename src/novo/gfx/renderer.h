@@ -1,17 +1,14 @@
-#ifndef RENDERER_H
-#define RENDERER_H
-
-#include <novo/gfx/drawable.h>
+#pragma once
 
 namespace novo {
-namespace graphics {
+namespace gfx {
 
-class Renderer
+struct Drawable;
+struct Shader;
+
+struct Renderer
 {
-public:
-	virtual void render(Drawable*) = 0;
+	virtual void render(Drawable*, Shader*) = 0;
 };
 
 }}
-
-#endif // RENDERER_H

@@ -1,5 +1,4 @@
-#ifndef GL_MESSAGE_CONTROL_H
-#define GL_MESSAGE_CONTROL_H
+#pragma once
 
 #include "object.h"
 
@@ -9,10 +8,11 @@ namespace novo {
 namespace gl {
 namespace debug {
 
-#define GLD(d) gl::GL_DEBUG_##d
+#define GLD(d) glb::GL_DEBUG_##d
 
 namespace Source {
 #define S(s) GLD(SOURCE_##s)
+	using glb::GLenum;
 	static const GLenum
 		API = S(API),
 		WindowSystem = S(WINDOW_SYSTEM),
@@ -25,6 +25,7 @@ namespace Source {
 
 namespace Type {
 #define S(s) GLD(TYPE_##s)
+	using glb::GLenum;
 	static const GLenum
 		Error = S(ERROR),
 		Deprecated = S(DEPRECATED_BEHAVIOR),
@@ -38,6 +39,7 @@ namespace Type {
 
 namespace Severity {
 #define S(s) GLD(SEVERITY_##s)
+	using glb::GLenum;
 	static const GLenum
 		High = S(HIGH),
 		Medium = S(MEDIUM),
@@ -50,19 +52,14 @@ namespace Severity {
 #undef GLD
 
 struct MessageState {
-	GLenum source, type;
-	GLuint id;
+	GLType source;
+	glb::GLenum type;
+	u32 id;
 	bool enabled;
 };
 
 inline void messageControl(const MessageState& msg) {
-	gl::glDebugMessageControl(msg.source, msg.type, GL_DONT_CARE, 1, &msg.id, static_cast<GLboolean>(msg.enabled));
-}
-
-inline void messageControl(GLuint id, bool enabled) {
-	gl::glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 1, &id, static_cast<GLboolean>(enabled));
+	glb::glDebugMessageControl(msg.source, msg.type, glb::GL_DONT_CARE, 1, &msg.id, static_cast<glb::GLboolean>(msg.enabled));
 }
 
 }}}
-
-#endif // GL_MESSAGE_CONTROL_H

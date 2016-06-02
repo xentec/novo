@@ -1,54 +1,36 @@
-#ifndef NAMES_H
-#define NAMES_H
+#pragma once
 
-#include <novo/global.h>
+#include "novo/global.h"
+#include "debug.h"
 
-#include <glbinding/gl/enum.h>
 #include <unordered_map>
 
 namespace novo {
 namespace gl {
 namespace names {
 
-using namespace ::gl;
-
-static std::unordered_map<GLenum, string>
+static const std::unordered_map<glb::GLenum, string>
 debug {
 	// Source
-	{GL_DEBUG_SOURCE_API, "API"},
-	{GL_DEBUG_SOURCE_WINDOW_SYSTEM, "Window System"},
-	{GL_DEBUG_SOURCE_SHADER_COMPILER, "Shader Compiler"},
-	{GL_DEBUG_SOURCE_THIRD_PARTY, "Third Party"},
-	{GL_DEBUG_SOURCE_APPLICATION, "Application"},
-	{GL_DEBUG_SOURCE_OTHER, "Other"},
+	{debug::Source::API, "API"},
+	{debug::Source::WindowSystem, "Window System"},
+	{debug::Source::ShaderCompiler, "Shader Compiler"},
+	{debug::Source::ThirdParty, "Third Party"},
+	{debug::Source::Application, "Application"},
+	{debug::Source::Other, "Other"},
 	// Type
-	{GL_DEBUG_TYPE_ERROR, "Error"},
-	{GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "Deprecated"},
-	{GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "Undefined"},
-	{GL_DEBUG_TYPE_PORTABILITY, "Portability"},
-	{GL_DEBUG_TYPE_PERFORMANCE, "Performance"},
-	{GL_DEBUG_TYPE_OTHER, "Other"},
-	{GL_DEBUG_TYPE_MARKER, "Marker"},
+	{debug::Type::Error, "Error"},
+	{debug::Type::Deprecated, "Deprecated"},
+	{debug::Type::Undefined, "Undefined"},
+	{debug::Type::Portability, "Portability"},
+	{debug::Type::Performance, "Performance"},
+	{debug::Type::Other, "Other"},
+	{debug::Type::Marker, "Marker"},
 	// Severity
-	{GL_DEBUG_SEVERITY_HIGH, "High"},
-	{GL_DEBUG_SEVERITY_MEDIUM, "Medium"},
-	{GL_DEBUG_SEVERITY_LOW, "Low"},
-	{GL_DEBUG_SEVERITY_NOTIFICATION, "Notify"},
-},
-shader {
-	{GL_VERTEX_SHADER, "Vertex shader"},
-	{GL_FRAGMENT_SHADER, "Fragment shader"},
-	{GL_GEOMETRY_SHADER, "Geometry shader"},
-},
-buffer {
-	{GL_ARRAY_BUFFER, "array buffer"},
-	{GL_ELEMENT_ARRAY_BUFFER, "index buffer"},
-	{GL_UNIFORM_BUFFER, "uniform buffer"},
-	{GL_DRAW_INDIRECT_BUFFER, "draw command buffer"},
-	{GL_SHADER_STORAGE_BUFFER, "shader storage buffer"},
-	{GL_TRANSFORM_FEEDBACK_BUFFER, "tranform feedback buffer"}
+	{debug::Severity::High, "High"},
+	{debug::Severity::Medium, "Medium"},
+	{debug::Severity::Low, "Low"},
+	{debug::Severity::Notification, "Notify"},
 };
 
 }}}
-
-#endif // NAMES_H

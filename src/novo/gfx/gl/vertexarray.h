@@ -1,30 +1,30 @@
-#ifndef VERTEXARRAY_H
-#define VERTEXARRAY_H
+#pragma once
 
 #include "bindable.h"
 #include "buffer.h"
-#include "program.h"
 
 namespace novo {
 namespace gl {
 
-class VertexArray : public Bindable<GL_VERTEX_ARRAY, glGenVertexArrays, glDeleteVertexArrays, dtl::bindFunc<glBindVertexArray> >
+struct VertexArray : Bindable<glb::GL_VERTEX_ARRAY, glb::glGenVertexArrays, glb::glDeleteVertexArrays, dtl::bindFunc<glb::glBindVertexArray>>
 {
-public:
 	VertexArray(const string& label = "");
 
-	void bindAttribute(const Buffer& vbo, Attribute attrib, GLuint component_count, GLenum data_type, GLuint stride = 0, GLuint offset = 0, bool normalize = false);
-	void unbind(Attribute attrib);
+	void use(const Buffer& buffer);
 
-	template<typename T>
-	void addAttribute(Buffer& vbo, const T& data, Attribute attrib, GLuint component_count, GLenum data_type, GLuint stride = 0, bool normalize = false)
+	void bindAttribute(const Buffer& vbo, i32 attrib, u32 component_count, Data::Type data_type, u32 stride = 0, u32 offset = 0, bool normalize = false);
+
+	template<class T>
+	void addAttribute(Buffer& vbo, i32 attrib, const T& data, u32 component_count, Data::Type data_type, u32 stride = 0, bool normalize = false)
 	{
 		bindAttribute(vbo, attrib, component_count, data_type, stride, vbo.offset(), normalize);
 		vbo.addSubElements(data);
 	}
 
+	void unbindAttrib(i32 attrib);
+
+	void drawArrays(glb::GLenum type, usz count);
+	void drawElements(glb::GLenum type, usz count, Data::Type data_type);
 };
 
 }}
-
-#endif // VERTEXARRAY_H
