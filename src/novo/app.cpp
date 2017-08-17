@@ -12,7 +12,8 @@
 #include "novo/component/motion.h"
 #include "novo/component/screen.h"
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <entityx/Entity.h>
 #include <glbinding/Binding.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -35,7 +36,7 @@ using std::bind;
 using entityx::Entity;
 
 static const string fmtTitle(APPNAME " - MSPF: {:.4f}ms ::S: {}");
-static const struct Size { i32 width, height; } winSize { 800, 600 };
+static const struct Size { i32 width, height; } winSize { 1980, 1080 };
 
 static void glfwErrorCB(int code, const char* msg);
 static void glDebugCB(glb::GLenum source, glb::GLenum type, glb::GLuint id, glb::GLenum severity, glb::GLsizei length, const glb::GLchar* message, const void* userParam);

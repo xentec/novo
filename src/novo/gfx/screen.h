@@ -14,7 +14,7 @@ struct Screen : Drawable, Renderer
 	virtual ~Screen();
 
 	void resize(i32 width, i32 height);
-	void clear(glm::vec4 color = glm::vec4(0.2, 0.2, 0.2, 1.0));
+	void clear(glm::vec4 color = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 
 	void update(Shader& shader) const;
 	void use();

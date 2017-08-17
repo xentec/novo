@@ -29,7 +29,7 @@ bool Shader::compile() const
 
 	bool ok = isCompiled();
 	if(!ok)
-		throw OpenGLException(this, fmt::sprintf("failed to compile:\n%s", getInfoLog()));
+		throw OpenGLException(this, fmt::format("failed to compile:\n{}", getInfoLog()));
 
 	return ok;
 }

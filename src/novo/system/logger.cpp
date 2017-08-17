@@ -18,7 +18,7 @@ void Logger::update(EntityManager& es, EventManager& evm, f32 dt)
 	ComponentHandle<Position> pos;
 
 	for(const Entity& e: es.entities_with_components(pos, mov, player)) {
-		DBG(5, "{}, {}, {}", to_string(mov->a), to_string(mov->v), to_string(pos->curr));
+		DBG(5, "{}: {}, {}, {}", e.id().id(), to_string(mov->a), to_string(mov->v), to_string(pos->curr));
 	}
 }
 

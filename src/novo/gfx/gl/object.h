@@ -3,7 +3,7 @@
 #include "novo/global.h"
 #include "novo/exception.h"
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
 
 #include <glbinding/Meta.h>
 #include <glbinding/gl45core/gl.h>

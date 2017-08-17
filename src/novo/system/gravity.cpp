@@ -19,12 +19,12 @@ void Gravity::update(EntityManager& es, EventManager& evm, f32 dt)
 		ents.assign(v.begin(),v.end());
 	}
 
-	for (i32 i = 0; i < ents.size(); i++) {
+	for (usz i = 0; i < ents.size(); i++) {
 		Entity main = ents[i];
 		vec3 mainPos = main.component<Position>()->curr;
 		f32 g = -G * main.component<Mass>()->m;
 
-		for (i32 j = 0; j < i; j++) {
+		for (usz j = 0; j < i; j++) {
 			Entity peer = ents[j];
 			vec3 peerPos = peer.component<Position>()->curr;
 			//ComponentHandle<Motion> v2 = peer.component<Motion>();

@@ -1,7 +1,8 @@
 
 #include "novo/app.h"
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <cxxopts.hpp>
 
 #include <exception>

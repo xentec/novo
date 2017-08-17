@@ -17,7 +17,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
 #include <random>
 
 using namespace entityx;
@@ -47,7 +47,7 @@ World::World(i32 size)
 		e.assign<Motion>();
 		e.assign<Mass>(1000000000.0f);
 	}
-
+/*
 	e = entities.create();
 	e.assign<Position>(1, 0, 0);
 	e.assign<Virtual>(mdl, glm::vec4(1, 0, 0, 1), glm::scale(glm::mat4(), glm::vec3(size, 1, 1)));
@@ -65,7 +65,7 @@ World::World(i32 size)
 	e = entities.create();
 	e.assign<Position>(5,5,5);
 	e.assign<Drawable>(mdl, glm::vec4(1), glm::scale(glm::mat4(), glm::vec3(2, 2, 2)));
-
+*/
 /*/
 	e = entities.create();
 	e.assign<Position>(1, 0, 0);

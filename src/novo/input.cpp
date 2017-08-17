@@ -3,7 +3,8 @@
 #include "novo/app.h"
 #include "novo/window.h"
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 #include <iostream>
 
 using namespace novo;

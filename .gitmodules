@@ -1,0 +1,6 @@
+[submodule "extern/entityx"]
+	path = extern/entityx
+	url = https://github.com/alecthomas/entityx
+[submodule "extern/cxxopts"]
+	path = extern/cxxopts
+	url = https://github.com/jarro2783/cxxopts

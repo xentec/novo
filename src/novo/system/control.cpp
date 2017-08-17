@@ -30,7 +30,7 @@ void PlayerControl::configure(EventManager& evm)
 	f64 x, y;
 	App::getMe().getWindow().getCursorPos(x, y);
 	cursor.curr = cursor.prev = vec2{ x, y };
-	DBG(4, "{}", cursor.prev);
+	DBG(4, "Cursor: {}", cursor.prev);
 }
 
 void PlayerControl::update(EntityManager& es, EventManager& evm, f32 dt)
@@ -68,7 +68,7 @@ void PlayerControl::update(EntityManager& es, EventManager& evm, f32 dt)
 			mov->v = pos->dir * dir * mul;
 			if(!(dir.x && dir.z) && dir.y)
 				mov->v = dir * mul;
-			DBG(1, "{}", mov->v);
+			DBG(1, "Player Move: {}", mov->v);
 			break;
 		case Controllable::Mode::SPACE:
 			gfx::Camera::spaceRotation(pos->dir, rot.x, rot.y, rot.z);

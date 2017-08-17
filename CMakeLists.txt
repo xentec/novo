@@ -4,18 +4,19 @@ project(Novo)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+set(CMAKE_CXX_EXTENSIONS OFF) # non gnu
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(X11 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
-find_package(glm REQUIRED)
+#find_package(glm REQUIRED)
 find_package(glbinding REQUIRED)
-find_package(EntityX REQUIRED)
 find_package(assimp REQUIRED)
 
+add_subdirectory(extern/entityx)
+add_subdirectory(extern/cxxopts)
 
 include_directories(
 	${X11_INCLUDE_DIRS}
@@ -33,13 +34,15 @@ list(APPEND LIBS
 	${X11_LIBRARIES}
 
 	${OPENGL_LIBRARY}
-	${GLFW3_LIBRARY}
+	glfw
 	${GLBINDING_LIBRARIES}
 	glbinding
 
-	${ENTITYX_LIBRARY}
+	cxxopts
+	entityx
+
 	${ASSIMP_LIBRARY}
-	cppformat
+	fmt
 )
 
 string(TOUPPER ${CMAKE_SYSTEM_NAME} OS_NAME)

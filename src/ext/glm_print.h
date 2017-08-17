@@ -2,9 +2,9 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <cppformat/format.h>
 
-#include <ostream>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 
 namespace glm {
 
@@ -35,12 +35,12 @@ std::ostream &operator<<(std::ostream &os, const tvec4<T,P> &v)
 template <typename T, precision P>
 std::ostream &operator<<(std::ostream &os, const tmat4x4<T,P> &m)
 {
-	return os << '{' << fmt::sprintf(
+	return os << '{' << fmt::format(
 					 "mat4x4\n"
-					 "(%5.2f %5.2f %5.2f %5.2f)\n"
-					 "(%5.2f %5.2f %5.2f %5.2f)\n"
-					 "(%5.2f %5.2f %5.2f %5.2f)\n"
-					 "(%5.2f %5.2f %5.2f %5.2f)",
+					 "({:5.2f} {:5.2f} {:5.2f} {:5.2f})\n"
+					 "({:5.2f} {:5.2f} {:5.2f} {:5.2f})\n"
+					 "({:5.2f} {:5.2f} {:5.2f} {:5.2f})\n"
+					 "({:5.2f} {:5.2f} {:5.2f} {:5.2f})",
 					 m[0][0], m[0][1], m[0][2], m[0][3],
 					 m[1][0], m[1][1], m[1][2], m[1][3],
 					 m[2][0], m[2][1], m[2][2], m[2][3],
