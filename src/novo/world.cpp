@@ -14,10 +14,11 @@
 #include "novo/system/control.h"
 #include "novo/system/mover.h"
 #include "novo/system/renderer.h"
+#include "novo/system/logger.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <fmt/format.h>
+#include <fmt/core.h>
 #include <random>
 
 using namespace entityx;
@@ -27,6 +28,7 @@ using namespace component;
 using namespace system;
 
 World::World(i32 size)
+	: EntityX()
 {
 	std::random_device rd;
 	std::default_random_engine rnd(rd());
@@ -95,27 +97,25 @@ World::World(i32 size)
 
 //*/
 
-
-
 	mdl->commit();
 
 	systems.add<Gravity>();
 	systems.add<Mover>();
+	systems.add<Logger>();
+
 	systems.configure();
 }
 
-void World::update(f32 dt)
+void World::update(ex::TimeDelta dt)
 {
-//	fmt::print_colored(fmt::RED, "Update... "); fmt::print("({}) ", dt);
+//	fmt::print_colored(fmt::red, "Update... "); fmt::print("({}) \n", dt);
 
-	ComponentHandle<Motion> mov;
-	for(Entity e: entities.entities_with_components(mov)) {
-		mov->a = glm::vec3(0);
-	}
+	entities.each<Motion>([&](Entity, Motion& mov) { mov.a = glm::vec3(0); });
+
 	systems.update<Gravity>(dt);
 	systems.update<PlayerControl>(dt);
 	systems.update<Mover>(dt);
-//	systems.update<Logger>(dt);
+	systems.update<Logger>(dt);
 }
 
 void World::render(f32 dt)

@@ -4,7 +4,6 @@
 #include "novo/exception.h"
 #include "novo/input.h"
 
-#include <cxxopts.hpp>
 #include <entityx/Event.h>
 
 #include <queue>
@@ -23,7 +22,7 @@ struct World;
 struct App : Receiver<App>
 {
 public:
-	App(const cxxopts::Options& options);
+	App();
 	virtual ~App();
 
 	static App& getMe();
@@ -37,8 +36,6 @@ public:
 	void receive(const event::window::Focus& ev);
 private:
 	static App* instance;
-
-	cxxopts::Options options;
 
 	bool running;
 	Window window;

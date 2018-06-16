@@ -5,11 +5,11 @@
 namespace novo {
 namespace system {
 
-struct Mover: System<Mover>
+struct Mover final: System<Mover>
 {
-	virtual void update(EntityManager &es, EventManager &evm, f32 dt);
+	virtual void update(EntityManager &es, EventManager &evm, TimeDelta dt) override;
 private:
-	f64 time = 0;
+	TimeDelta time = 0;
 };
 
 }}

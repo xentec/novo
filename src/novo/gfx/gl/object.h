@@ -5,8 +5,8 @@
 
 #include <fmt/format.h>
 
-#include <glbinding/Meta.h>
 #include <glbinding/gl45core/gl.h>
+#include <glbinding-aux/Meta.h>
 
 #include <functional>
 #include <unordered_map>
@@ -14,7 +14,7 @@
 namespace novo {
 namespace gl {
 
-#define DBG_GL(type, id, label, op, ref) DBG(4, "{}[{}]({}) {} ({})", glbinding::Meta::getString(type), id, label, op, ref)
+#define DBG_GL(type, id, label, op, ref) DBG(4, "{}[{}]({}) {} ({})", glbinding::aux::Meta::getString(type), id, label, op, ref)
 
 namespace glb = ::gl;
 
@@ -104,7 +104,7 @@ public:
 
 	template<GLType T, glDelFunc D>
 	OpenGLException(const Object<T,D>* obj, const string& reason):
-		Exception(fmt::format("{}({}): {}", glbinding::Meta::getString(obj->type), obj->getLabel(), reason)),
+		Exception(fmt::format("{}({}): {}", glbinding::aux::Meta::getString(obj->type), obj->getLabel(), reason)),
 		source(obj->type),
 		label(obj->getLabel())
 	{}

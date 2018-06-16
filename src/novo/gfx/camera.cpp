@@ -16,8 +16,8 @@ void Camera::spaceRotation(quat& rot, f32 pitch, f32 yaw, f32 roll)
 
 void Camera::fpsRotation(quat& rot, f32 pitch, f32 yaw, f32 roll)
 {
-	f64 p = glm::pitch(rot) + radians(pitch);
-	f64 y = glm::yaw(rot) + radians(yaw);
+//	f64 p = glm::pitch(rot) + radians(pitch);
+//	f64 y = glm::yaw(rot) + radians(yaw);
 //	DBG(1, "P:{:.2f} Y:{:.2f}", glm::degrees(p), glm::degrees(y));
 //	if(glm::abs(p) <= glm::half_pi<f64>())
 	rot *= angleAxis(radians(pitch), world.x);

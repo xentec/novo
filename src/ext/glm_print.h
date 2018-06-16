@@ -1,39 +1,33 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
 
 #include <fmt/format.h>
-#include <fmt/ostream.h>
 
-namespace glm {
-
-template <typename T, precision P>
-std::ostream &operator<<(std::ostream &os, const tvec1<T,P> &v)
+namespace fmt
 {
-	return os << '{' << v.x << '}';
-}
 
-template <typename T, precision P>
-std::ostream &operator<<(std::ostream &os, const tvec2<T,P> &v)
+template<class T, glm::length_t L, glm::qualifier Q>
+struct formatter<glm::vec<L,T,Q>>
 {
-	return os << '{' << v.x << ';' << v.y << '}';
-}
+	template <class ParseContext>
+	constexpr auto parse(ParseContext &ctx) { return ctx.begin(); }
 
-template <typename T, precision P>
-std::ostream &operator<<(std::ostream &os, const tvec3<T,P> &v)
-{
-	return os << '{' << v.x << ';' << v.y << ';' << v.z << '}';
-}
+	template <class FormatContext>
+	auto format(const glm::vec<L,T,Q> &v, FormatContext &ctx)
+	{
+		auto b = ctx.begin();
+		format_to(b, "{{");
 
-template <typename T, precision P>
-std::ostream &operator<<(std::ostream &os, const tvec4<T,P> &v)
-{
-	return os << '{' << v.x << ';' << v.y << ';' << v.z << ';' << v.w << '}';
-}
+		for(glm::length_t i = 0; i < L-1; i++)
+			format_to(b, "{},", v[i]);
 
-template <typename T, precision P>
-std::ostream &operator<<(std::ostream &os, const tmat4x4<T,P> &m)
+		return format_to(b, "{}}}", v[L-1]);
+	}
+};
+
+template<class T, glm::length_t C, glm::length_t R, glm::qualifier Q>
+std::ostream &operator<<(std::ostream &os, const glm::mat<C,R,T,Q> &m)
 {
 	return os << '{' << fmt::format(
 					 "mat4x4\n"

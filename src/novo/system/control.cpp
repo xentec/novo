@@ -11,8 +11,6 @@
 
 #include <GLFW/glfw3.h>
 
-
-
 using namespace novo::system;
 using namespace novo::component;
 
@@ -33,7 +31,7 @@ void PlayerControl::configure(EventManager& evm)
 	DBG(4, "Cursor: {}", cursor.prev);
 }
 
-void PlayerControl::update(EntityManager& es, EventManager& evm, f32 dt)
+void PlayerControl::update(EntityManager& es, EventManager&, TimeDelta)
 {
 	vec3 dir, rot;
 	f32 mul = 1.0f;
@@ -52,36 +50,29 @@ void PlayerControl::update(EntityManager& es, EventManager& evm, f32 dt)
 
 	cursor.prev = cursor.curr;
 
-
 	bool reset = mod & GLFW_MOD_CONTROL && keys[GLFW_KEY_SPACE];
 
-	ComponentHandle<Controllable> ctrl;
-	ComponentHandle<Position> pos;
-	ComponentHandle<Motion> mov;
-
-	for(Entity e: es.entities_with_components(ctrl, pos, mov))
+	es.each<Controllable, Position, Motion>([&](Entity, const Controllable& ctrl, Position& pos, Motion& mov)
 	{
-		switch(ctrl->mode)
+		switch(ctrl.mode)
 		{
 		case Controllable::Mode::FPS:
-			gfx::Camera::fpsRotation(pos->dir, rot.x, rot.y, rot.z);
-			mov->v = pos->dir * dir * mul;
+			gfx::Camera::fpsRotation(pos.dir, rot.x, rot.y, rot.z);
+			mov.v = pos.dir * dir * mul;
 			if(!(dir.x && dir.z) && dir.y)
-				mov->v = dir * mul;
-			DBG(1, "Player Move: {}", mov->v);
+				mov.v = dir * mul;
+//			DBG(1, "Player Move: {}", mov.v);
 			break;
 		case Controllable::Mode::SPACE:
-			gfx::Camera::spaceRotation(pos->dir, rot.x, rot.y, rot.z);
-			mov->v = pos->dir * dir * mul;
+			gfx::Camera::spaceRotation(pos.dir, rot.x, rot.y, rot.z);
+			mov.v = pos.dir * dir * mul;
 			break;
 		}
 
-		if(reset) {
-			mov->a = vec3();
-			mov->v = vec3();
-			pos->dir = quat();
-		}
-	}
+		if(reset)
+			mov.a = mov.v = vec3(), pos.dir = quat();
+	});
+
 }
 
 void PlayerControl::receive(const event::Key& ev)

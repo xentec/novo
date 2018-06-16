@@ -45,7 +45,7 @@ Screen::Screen(i32 width, i32 height, f32 fov, f32 near, f32 far, Framebuffer fb
 	cbo(TextureType::S2D, "screen.cbo"),
 	rbo("screen.rbo"),
 	shader("screen"),
-	aspect(static_cast<f32>(width)/height)
+	aspect(f32(width)/height)
 {
 	if(fb.getLabel().empty())
 		fb.setLabel("screen");

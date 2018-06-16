@@ -8,9 +8,9 @@ using namespace novo::component;
 
 static void integrate(Position &pos, Motion &mov, f64 time, f32 dt);
 
-void Mover::update(EntityManager& es, EventManager& evm, f32 dt)
+void Mover::update(EntityManager& es, EventManager& evm, TimeDelta dt)
 {
-	es.each<Position, Motion>([&](Entity e, Position& pos, Motion& mov)
+	es.each<Position, Motion>([&](Entity, Position& pos, Motion& mov)
 	{
 		pos.prev = pos.curr;
 		integrate(pos, mov, time, dt);

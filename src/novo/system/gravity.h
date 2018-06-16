@@ -5,10 +5,9 @@
 namespace novo {
 namespace system {
 
-struct Gravity: System<Gravity>
+struct Gravity final: System<Gravity>
 {
-	void update(EntityManager &entities, EventManager &evm, f32 dt) override;
-
+	virtual void update(EntityManager &entities, EventManager &evm, TimeDelta dt) override;
 };
 
 }}

@@ -13,12 +13,12 @@ using entityx::Receiver;
 
 namespace system {
 
-struct PlayerControl: System<PlayerControl>, Receiver<PlayerControl>
+struct PlayerControl final: System<PlayerControl>, Receiver<PlayerControl>
 {
 	PlayerControl();
 
-	virtual void configure(EventManager& evm);
-	virtual void update(EntityManager& es, EventManager& evm, f32 dt);
+	virtual void configure(EventManager& evm) override;
+	virtual void update(EntityManager& es, EventManager& evm, TimeDelta dt) override;
 
 	void receive(const event::Key& ev);
 	void receive(const event::Cursor& ev);

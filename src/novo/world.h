@@ -13,7 +13,7 @@ namespace novo {
 struct World : entityx::EntityX
 {
 	World(i32 size);
-	void update(f32 dt);
+	void update(entityx::TimeDelta dt);
 	void render(f32 dt);
 };
 

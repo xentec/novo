@@ -5,9 +5,9 @@
 namespace novo {
 namespace system {
 
-struct Logger : System<Logger>
+struct Logger final : System<Logger>
 {
-	void update(EntityManager &es, EventManager &evm, f32 dt);
+	virtual void update(EntityManager &es, EventManager &evm, TimeDelta dt) override;
 };
 
 }}

@@ -47,21 +47,21 @@ using std::string;
 	#include <fmt/format.h>
 
 	template<class... Args>
-	inline void _dbg(fmt::CStringRef format, const Args& ... args)
+	inline void _dbg(const std::string_view &format, const Args& ... args)
 	{
 		fmt::print(format, args...);
 		fmt::print("\n");
 	}
 
 	template<class... Args>
-	inline void _dbg(i8 lvl, fmt::CStringRef format, const Args& ... args)
+	inline void _dbg(i8 lvl, const std::string_view &format, const Args& ... args)
 	{
 		if(lvl <= DEBUG)
 			_dbg(format, args...);
 	}
 
 	template<class... Args> // cond is u8 because bool is 'ambiguous'
-	inline void _dbg(i8 lvl, u8 cond, fmt::CStringRef format, const Args& ... args)
+	inline void _dbg(i8 lvl, u8 cond, const std::string_view &format, const Args& ... args)
 	{
 		if(cond)
 			_dbg(lvl, format, args...);

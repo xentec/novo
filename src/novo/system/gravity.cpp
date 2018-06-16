@@ -10,14 +10,11 @@ using glm::vec3;
 
 static const f32 G = 6.67384e-11;
 //static const f32 G = 1.0f;
-static std::vector<Entity> ents;
 
-void Gravity::update(EntityManager& es, EventManager& evm, f32 dt)
+void Gravity::update(EntityManager& es, EventManager& evm, TimeDelta dt)
 {
-	{
-		EntityManager::View<Position, Motion, Mass> v = es.entities_with_components<Position, Motion, Mass>();
-		ents.assign(v.begin(),v.end());
-	}
+	EntityManager::View<Position, Motion, Mass> v = es.entities_with_components<Position, Motion, Mass>();
+	std::vector<Entity> ents(v.begin(),v.end());
 
 	for (usz i = 0; i < ents.size(); i++) {
 		Entity main = ents[i];

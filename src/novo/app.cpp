@@ -43,8 +43,7 @@ static void glDebugCB(glb::GLenum source, glb::GLenum type, glb::GLuint id, glb:
 
 App* App::instance = nullptr;
 
-App::App(const cxxopts::Options& options):
-	options(options),
+App::App():
 	running(true),
 	window(winSize.width, winSize.height, APPNAME),
 	input(window),
@@ -66,12 +65,12 @@ App::App(const cxxopts::Options& options):
 	test.open();
 	test.bindContext();
 
-	glbinding::Binding::initialize(false);
+	glbinding::Binding::initialize(glfwGetProcAddress);
 
 	window.setup.visible = false;
 	window.setup.resizable = true;
-	window.setup.GLversion.major = 3;
-	window.setup.GLversion.minor = 3;
+	window.setup.GLversion.major = 4;
+	window.setup.GLversion.minor = 5;
 	window.setup.GLprofile = window::Config::Profile::CORE;
 	window.setup.debugging = true;
 }
@@ -110,15 +109,15 @@ i32 App::run()
 
 	gfx::Screen screen(winSize.width, winSize.height);
 
-	ptrS<system::Renderer> renderer(new system::Renderer());
-	ptrS<system::PlayerControl> control(new system::PlayerControl());
+	auto renderer = std::make_shared<system::Renderer>();
+	auto control = std::make_shared<system::PlayerControl>();
 
 	renderer->addShader(gfx::Shader("cube"));
 	gfx::Shader shaderNormals("normals");
 	shaderNormals.setPolyMode(gl::glb::GL_LINE);
 //	renderer->addShader(shaderNormals);
 
-	u32 size = options["size"].as<u32>();
+	u32 size = 8;
 
 	World world(size*size);
 	world.systems.add(renderer);
@@ -144,8 +143,8 @@ i32 App::run()
 
 	struct {
 		steady_clock::time_point now, then, title;
-		duration<f32, std::milli> elapsed { 0 }, lag { 0 };
-		const duration<f32, std::milli> target { 1000.f/60.f };
+		duration<entityx::TimeDelta, std::milli> elapsed { 0 }, lag { 0 };
+		const duration<entityx::TimeDelta, std::milli> target { 1000.f/60.f };
 	} time;
 
 	time.then = time.title = steady_clock::now();
@@ -169,7 +168,7 @@ i32 App::run()
 		/// Update ##########################
 		while(time.lag >= time.target) { // compensate lost frames
 			for(auto world: worlds) {
-				world.second->update(1.f);
+				world.second->update(1.0);
 			}
 			time.lag -= time.target;
 		}

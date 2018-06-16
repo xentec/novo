@@ -28,56 +28,51 @@ void Renderer::addShader(const gfx::Shader& shader)
 	shaders.push_back(shader);
 }
 
-void Renderer::configure(EventManager& evm)
+void Renderer::configure(EventManager&)
 {
 	for(gfx::Shader& shader : shaders)
 		shader.compile();
 }
 
-void Renderer::update(EntityManager& es, EventManager& evm, f32 dt)
+void Renderer::update(EntityManager& es, EventManager&, TimeDelta)
 {
 	gl::enable(GL_DEPTH_TEST);
 	gl::enable(GL_CULL_FACE);
 
-	ComponentHandle<Position> plyPos, entPos;
-	ComponentHandle<Screen> scr;
-
-	for(Entity e: es.entities_with_components(scr, plyPos))
+	es.each<Screen, Position>([&](Entity, const Screen& scr_comp, const Position& plyPos)
 	{
-		scr->screen->setView(plyPos->curr, plyPos->dir);
-		scr->screen->use();
+		auto &scr = *scr_comp.screen;
+		scr.setView(plyPos.curr, plyPos.dir);
+		scr.use();
 
 		{
-			ComponentHandle<Virtual> drw;
 			gfx::Shader& shader = shaders[0];
 
-			scr->screen->update(shader);
+			scr.update(shader);
 			shader.use();
 
-			for(Entity e: es.entities_with_components(drw, entPos))
+			es.each<Virtual, Position>([&](Entity, const Virtual& drw, const Position& entPos)
 			{
-				shader["color"] = drw->color;
-				shader["model"] = glm::translate(glm::mat4_cast(entPos->dir), entPos->curr) * drw->matrix;
-				drw->drawable->draw(&shader);
-			}
+				shader["color"] = drw.color;
+				shader["model"] = glm::translate(glm::mat4_cast(entPos.dir), entPos.curr) * drw.matrix;
+				drw.drawable->draw(&shader);
+			});
 		}
 		{
-			ComponentHandle<Drawable> drw;
 			for(gfx::Shader& shader: shaders)
 			{
-				scr->screen->update(shader);
+				scr.update(shader);
 				shader.use();
 
-				for(Entity e: es.entities_with_components(drw, entPos))
+				es.each<Drawable, Position>([&](Entity, const Drawable& drw, const Position& entPos)
 				{
-					shader["color"] = drw->color;
-					shader["model"] = glm::translate(glm::mat4_cast(entPos->dir), entPos->curr) * drw->matrix;
-					drw->drawable->draw(&shader);
-				}
+					shader["color"] = drw.color;
+					shader["model"] = glm::translate(glm::mat4_cast(entPos.dir), entPos.curr) * drw.matrix;
+					drw.drawable->draw(&shader);
+				});
 			}
 		}
-
-	}
+	});
 
 	gl::disable(GL_CULL_FACE);
 	gl::disable(GL_DEPTH_TEST);
